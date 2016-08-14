@@ -8,10 +8,10 @@
     <meta name="description" content="常用的Java集合类源码简析">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ArrayList源码简析">
-<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/13/javaCollection/index.html">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/index.html">
 <meta property="og:site_name" content="呵呵">
 <meta property="og:description" content="常用的Java集合类源码简析">
-<meta property="og:updated_time" content="2016-08-13T14:19:21.875Z">
+<meta property="og:updated_time" content="2016-08-14T07:03:03.749Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ArrayList源码简析">
 <meta name="twitter:description" content="常用的Java集合类源码简析">
@@ -146,11 +146,11 @@
             <h2 id="name">Fijon</h2>
             <h3 id="title">Web Developer</h3>
             <span id="location"><i class="fa fa-map-marker"></i>JiangSu China</span>
-            <a id="follow" target="_blank" href="https://github.com/ppoffice/">关注我</a>
+            <a id="follow" target="_blank" href="https://github.com/Fijon/">关注我</a>
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                1
+                2
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -165,26 +165,8 @@
                     
                     
                     <td>
-                        <a href="http://github.com/ppoffice/hexo-theme-icarus" target="_blank" title="github" class=tooltip>
+                        <a href="https://github.com/Fijon" target="_blank" title="github" class=tooltip>
                             <i class="fa fa-github"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="twitter" class=tooltip>
-                            <i class="fa fa-twitter"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="facebook" class=tooltip>
-                            <i class="fa fa-facebook"></i>
-                        </a>
-                    </td>
-                    
-                    <td>
-                        <a href="/" target="_blank" title="dribbble" class=tooltip>
-                            <i class="fa fa-dribbble"></i>
                         </a>
                     </td>
                     
@@ -202,7 +184,7 @@
 </aside>
 
             
-            <section id="main"><article id="post-javaCollection" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-arrayListAnalysis" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -219,7 +201,7 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2016/08/13/javaCollection/">
+        <a href="/2016/08/13/arrayListAnalysis/">
             <time datetime="2016-08-13T02:46:56.000Z" itemprop="datePublished">2016-08-13</time>
         </a>
     </div>
@@ -234,7 +216,7 @@
                     
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Collection/">Collection</a>, <a class="tag-link" href="/tags/List/">List</a>, <a class="tag-link" href="/tags/Map/">Map</a>
+        <a class="tag-link" href="/tags/Collection/">Collection</a>, <a class="tag-link" href="/tags/List/">List</a>, <a class="tag-link" href="/tags/Original/">Original</a>
     </div>
 
                 </div>
@@ -243,8 +225,7 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <pre><code>常用Java集合---ArrayList
-</code></pre><a id="more"></a>
+            <p>常用Java集合—ArrayList<br><a id="more"></a></p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>ArrayList是我们常用的集合之一，它继承自抽象类AbstractList，实现了List接口。其底层使用数组实现，并可以放入null元素。ArrrayList支持泛型，因此底层数组为一个Object数组。以下先从ArrayList的属性开始说起。</p>
 <h2 id="属性简析"><a href="#属性简析" class="headerlink" title="属性简析"></a>属性简析</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_CAPACITY = <span class="number">10</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] EMPTY_ELEMENTDATA = &#123;&#125;; </div><div class="line"><span class="keyword">private</span> <span class="keyword">transient</span> Object[] elementData; </div><div class="line"><span class="keyword">private</span> <span class="keyword">int</span> size; </div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_ARRAY_SIZE = Integer.MAX_VALUE - <span class="number">8</span>;</div></pre></td></tr></table></figure>
 <p>其中：<br><code>DEFAULT_CAPACITY</code>属性是默认的数组长度列表。当我们在初始化ArrayList时，如果没有给定默认的空间，ArrayList会在第一次添加元素的时候，直接实将elementData实例化为长度为10的Object数组。<br><code>EMPTY_ELEMENTDATA</code>属性是一个空的常量数组，会在第一次实例化ArrayList对象时便声明初始化，并一直在内存中存在。<br><code>elementData</code>属性是最终存储元素的变量。<br><code>size</code>属性是ArrayList的元素个数，并不是elementData数组的长度。<br><code>MAX_ARRAY_SIZE</code>常量表示装载数据数组的最大长度。但是elementData的长度可以超过该数值。</p>
@@ -297,8 +278,8 @@
 <h4 id="属性-1"><a href="#属性-1" class="headerlink" title="属性"></a>属性</h4><p><code>private final AbstractList&lt;E&gt; parent</code>:被截取的ArrayList对象，父序列。<br><code>private final int parentOffset</code>：相对于父序列的相对偏移量。<br><code>private final int offset</code>：子序列的偏移量。<br><code>int size</code>：子序列的元素个数。<br>具体的属性意思，可以查看其构造方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">SubList(AbstractList&lt;E&gt; parent, <span class="keyword">int</span> offset, <span class="keyword">int</span> fromIndex, <span class="keyword">int</span> toIndex) &#123;</div><div class="line">            <span class="keyword">this</span>.parent = parent;</div><div class="line">            <span class="keyword">this</span>.parentOffset = fromIndex;</div><div class="line">            <span class="keyword">this</span>.offset = offset + fromIndex;</div><div class="line">            <span class="keyword">this</span>.size = toIndex - fromIndex;</div><div class="line">            <span class="keyword">this</span>.modCount = ArrayList.<span class="keyword">this</span>.modCount;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <hr>
-<p>博文原创，欢迎装载！</p>
-<h2 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-13-javaCollection"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-13-javaCollection" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/13/javaCollection/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/13/javaCollection/">http://xuhuiqiang.cn/2016/08/13/javaCollection/</a></h2>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-13-arrayListAnalysis"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-13-arrayListAnalysis" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/">http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/</a></h6><hr>
+
         
         </div>
         <footer class="article-footer">
@@ -308,7 +289,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/08/13/javaCollection/" data-id="cirt9rvfa00013kkijhtyyfgz" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/" data-id="ciru9no1h00000okichwv8cs0" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -376,13 +357,27 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/2016/08/13/javaCollection/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/13/javaCollection/">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/">评论</a>
     
 
         </footer>
     </div>
     
         
+<nav id="article-nav">
+    
+        <a href="/2016/08/13/linkedListAnalysis/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    LinkedList源码简析
+                
+            </div>
+        </a>
+    
+    
+</nav>
+
 
     
 </article>
@@ -392,7 +387,7 @@
     <section id="comments">
     
         
-    <div class="ds-thread" data-thread-key="2016/08/13/javaCollection/" data-title="ArrayList源码简析" data-url="http://xuhuiqiang.cn/2016/08/13/javaCollection/"></div>
+    <div class="ds-thread" data-thread-key="2016/08/13/arrayListAnalysis/" data-title="ArrayList源码简析" data-url="http://xuhuiqiang.cn/2016/08/13/arrayListAnalysis/"></div>
     <style>
         #ds-thread #ds-reset .ds-textarea-wrapper {
             background: none;
@@ -447,7 +442,7 @@
                     <li>
                         
                         <div class="item-thumbnail">
-                            <a href="/2016/08/13/javaCollection/" class="thumbnail">
+                            <a href="/2016/08/13/linkedListAnalysis/" class="thumbnail">
     
     
         <span class="thumbnail-image thumbnail-none"></span>
@@ -458,7 +453,26 @@
                         
                         <div class="item-inner">
                             <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
-                            <p class="item-title"><a href="/2016/08/13/javaCollection/" class="title">ArrayList源码简析</a></p>
+                            <p class="item-title"><a href="/2016/08/13/linkedListAnalysis/" class="title">LinkedList源码简析</a></p>
+                            <p class="item-date"><time datetime="2016-08-13T14:34:28.000Z" itemprop="datePublished">2016-08-13</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/08/13/arrayListAnalysis/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/08/13/arrayListAnalysis/" class="title">ArrayList源码简析</a></p>
                             <p class="item-date"><time datetime="2016-08-13T02:46:56.000Z" itemprop="datePublished">2016-08-13</time></p>
                         </div>
                     </li>
@@ -472,7 +486,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">1</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li></ul>
         </div>
     </div>
 
@@ -481,7 +495,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">2</span></li></ul>
         </div>
     </div>
 
@@ -490,7 +504,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">标签</h3>
         <div class="widget">
-            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Map/">Map</a><span class="tag-list-count">1</span></li></ul>
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Original/">Original</a><span class="tag-list-count">2</span></li></ul>
         </div>
     </div>
 
@@ -499,7 +513,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Collection/" style="font-size: 10px;">Collection</a> <a href="/tags/List/" style="font-size: 10px;">List</a> <a href="/tags/Map/" style="font-size: 10px;">Map</a>
+            <a href="/tags/Collection/" style="font-size: 10px;">Collection</a> <a href="/tags/List/" style="font-size: 10px;">List</a> <a href="/tags/Original/" style="font-size: 10px;">Original</a>
         </div>
     </div>
 
