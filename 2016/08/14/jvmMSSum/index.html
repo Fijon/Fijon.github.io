@@ -3,20 +3,20 @@
 <head>
     <meta charset="utf-8">
     
-    <title>menu.关于我 | 呵呵</title>
+    <title>menu.Java运行时内存空间摘要 | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="关于我">
-<meta property="og:url" content="http://xuhuiqiang.cn/about/index.html">
+    <meta name="description" content="JVM内存空间摘要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java运行时内存空间摘要">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/14/jvmMSSum/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！">
-<meta property="og:image" content="https://oa33v4wla.qnssl.com/pay.png-moneyCode">
-<meta property="og:updated_time" content="2016-08-13T13:08:25.376Z">
+<meta property="og:description" content="JVM内存空间摘要">
+<meta property="og:image" content="https://oa33v4wla.qnssl.com/JvmMsSum.png">
+<meta property="og:updated_time" content="2016-08-14T08:02:28.241Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于我">
-<meta name="twitter:description" content="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！">
-<meta name="twitter:image" content="https://oa33v4wla.qnssl.com/pay.png-moneyCode">
+<meta name="twitter:title" content="Java运行时内存空间摘要">
+<meta name="twitter:description" content="JVM内存空间摘要">
+<meta name="twitter:image" content="https://oa33v4wla.qnssl.com/JvmMsSum.png">
     
 
     
@@ -186,7 +186,7 @@
 </aside>
 
             
-            <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-jvmMSSum" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -194,8 +194,8 @@
             <header class="article-header">
                 
     
-        <h1 itemprop="name">
-            <a class="article-title" href="/about/index.html">关于我</a>
+        <h1 class="article-title" itemprop="name">
+            Java运行时内存空间摘要
         </h1>
     
 
@@ -203,21 +203,33 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/about/index.html">
-            <time datetime="2016-08-13T13:08:25.376Z" itemprop="datePublished">2016-08-13</time>
+        <a href="/2016/08/14/jvmMSSum/">
+            <time datetime="2016-08-14T07:40:21.000Z" itemprop="datePublished">2016-08-14</time>
         </a>
     </div>
 
 
                     
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
                     
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/JVM-Memory-space/">JVM Memory space</a>, <a class="tag-link" href="/tags/Original/">Original</a>
+    </div>
+
                 </div>
             </header>
         
         <div class="article-entry" itemprop="articleBody">
         
             
-            <h5 id="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！"><a href="#各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！" class="headerlink" title="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！"></a>各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！</h5><h5 id="如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！"><a href="#如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！" class="headerlink" title="如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！"></a>如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！</h5><p><img src="https://oa33v4wla.qnssl.com/pay.png-moneyCode" alt="微信扫码"> </p>
+            <p>Java运行时内存空间相关定义与说明。<br><a id="more"></a><br>记笔记时，喜欢将内容变为思维导图的形式记录下来。但是想把导图变为博文实在是太麻烦了！！！下图便是我在学习相关jvm内存空间知识时做的笔记。有空时再写成文字。<br><strong>PS：点击图片可以放大！！！</strong><br><img src="https://oa33v4wla.qnssl.com/JvmMsSum.png" alt="jvm内存空间摘要"></p>
+<hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-jvmMSSum"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-jvmMSSum" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/14/jvmMSSum/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/14/jvmMSSum/">http://xuhuiqiang.cn/2016/08/14/jvmMSSum/</a></h6><hr>
 
         
         </div>
@@ -228,7 +240,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/about/index.html" data-id="cirubqhav000aagkill0dtcm9" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/08/14/jvmMSSum/" data-id="cirubqh8j0000agkilgg28o1s" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -296,13 +308,73 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/about/index.html#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/about/index.html">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/08/14/jvmMSSum/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/14/jvmMSSum/">评论</a>
     
 
         </footer>
     </div>
     
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2016/08/13/linkedListAnalysis/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">LinkedList源码简析</div>
+        </a>
+    
+</nav>
+
+
+    
 </article>
+
+
+    
+    <section id="comments">
+    
+        
+    <div class="ds-thread" data-thread-key="2016/08/14/jvmMSSum/" data-title="Java运行时内存空间摘要" data-url="http://xuhuiqiang.cn/2016/08/14/jvmMSSum/"></div>
+    <style>
+        #ds-thread #ds-reset .ds-textarea-wrapper {
+            background: none;
+        }
+        #ds-reset .ds-avatar img {
+            box-shadow: none;
+        }
+        #ds-reset .ds-gradient-bg {
+            background: #f7f7f7;
+        }
+        #ds-thread #ds-reset li.ds-tab a {
+            border-radius: 3px;
+        }
+        #ds-thread #ds-reset .ds-post-button {
+            color: white;
+            border: none;
+            box-shadow: none;
+            background: #d32;
+            text-shadow: none;
+            font-weight: normal;
+            font-family: 'Microsoft Yahei';
+        }
+        #ds-thread #ds-reset .ds-post-button:hover {
+            color: white;
+            background: #DE594C;
+        }
+        #ds-thread #ds-reset .ds-post-button:active {
+            background: #d32;
+        }
+        #ds-smilies-tooltip ul.ds-smilies-tabs li a.ds-current {
+            color: white;
+            background: #d32;
+            box-shadow: none;
+            text-shadow: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
+    </section>
 
 </section>
             
