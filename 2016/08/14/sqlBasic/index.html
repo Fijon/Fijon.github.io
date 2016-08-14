@@ -3,17 +3,18 @@
 <head>
     <meta charset="utf-8">
     
-    <title>归档: 2016/8 | 呵呵</title>
+    <title>menu.sqlBasic | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Fijon&apos;s blog | java | android | 前端">
-<meta property="og:type" content="website">
-<meta property="og:title" content="呵呵">
-<meta property="og:url" content="http://xuhuiqiang.cn/archives/2016/08/index.html">
+    <meta name="description" content="sql语句基础。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqlBasic">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/14/sqlBasic/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="Fijon&apos;s blog | java | android | 前端">
+<meta property="og:description" content="sql语句基础。">
+<meta property="og:updated_time" content="2016-08-14T15:41:02.842Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="呵呵">
-<meta name="twitter:description" content="Fijon&apos;s blog | java | android | 前端">
+<meta name="twitter:title" content="sqlBasic">
+<meta name="twitter:description" content="sql语句基础。">
     
 
     
@@ -183,20 +184,16 @@
 </aside>
 
             
-            <section id="main"><div class="timeline timeline-wrap">
-    
-            <div class="timeline-row timeline-row-major">
-                <span class="node"><i class="fa fa-calendar"></i></span>
-                <h1 class="title">2016</h1>
-            </div>
+            <section id="main"><article id="post-sqlBasic" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
         
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
+        
+        
+            <header class="article-header">
                 
     
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2016/08/14/sqlBasic/">sqlBasic</a>
+        <h1 class="article-title" itemprop="name">
+            sqlBasic
         </h1>
     
 
@@ -223,154 +220,201 @@
     </div>
 
                 </div>
-            </div>
+            </header>
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>sql语句基础。<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>SQL语言指结果查询语言，用于执行查询的语法，但是也包含了用于更新、插入、和删除记录的语法。主要由：数据定义语言（Data Definition Language，DDL），数据操作语言（Data Manipulation Language，DML），数据控制语言（DataControl Language，DCL）三者构成。</p>
+<h2 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h2><p>DDL用于定义和管理SQL数据库中所有对象的语言，它是我们有能力创建或修改数据库中的相关对象（数据库，表等等）已经他们之间的关系。常用的相关重要语句包括：</p>
+<ul>
+<li>Create Database：创建数据库</li>
+<li>Alter Database:修改数据库</li>
+<li>Create Table：创建数据库表</li>
+<li>Alter Table：更新表结构</li>
+<li>Drop Table：删除表</li>
+<li>Create Index：创建索引</li>
+<li>Drop Index：删除索引<br>其他还有对存储结构，事务，视图等的相关操作。</li>
+</ul>
+<h2 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h2><p>DML是用于操作数据库对象中所包含的数据的语言，其操作对象是记录（record）。其操作方法包括：</p>
+<ul>
+<li>Insert语句：用于插入新的记录，可以进行批量操作。</li>
+<li>Delete语句：用于删除表中的记录，可批量操作。</li>
+<li>Update语句：更新表中的记录，可批量操作。<br>与DDL不同的是，DML是对记录进行操作，而DDL是对数据库中的对象进行操作。两者的操作对象不同。</li>
+</ul>
+<h2 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h2><p>DCL是提供对数据库操作权限的相关操作，比如说数据库授权，数据库角色等等，其操作方法主要有两个：</p>
+<ul>
+<li>Grant：赋予权限。</li>
+<li>Revoke：撤回权限。<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2>实例基于MySql实现。</li>
+</ul>
+<h3 id="数据库定义"><a href="#数据库定义" class="headerlink" title="数据库定义"></a>数据库定义</h3><h4 id="定义数据库"><a href="#定义数据库" class="headerlink" title="定义数据库"></a>定义数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">drop</span> <span class="keyword">database</span> <span class="keyword">if</span> <span class="keyword">exists</span> DATABASE_Name;</div><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> DATABASE_NAME <span class="keyword">default</span> <span class="built_in">character</span> <span class="keyword">set</span> utf8 ;</div></pre></td></tr></table></figure>
+<p>首先判断数据库系统中是否存在同名数据库，如果存在则删除（通常不直接删除数据库）。<br>创建语句表示：创建了一个名为DATABASE_NAME的数据库，其字符存储的格式为utf8。<br>我们创建一个名为Test的数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> <span class="keyword">Test</span> <span class="keyword">default</span> <span class="built_in">character</span> <span class="keyword">set</span> utf8 ;</div></pre></td></tr></table></figure>
+<h4 id="定义表结构"><a href="#定义表结构" class="headerlink" title="定义表结构"></a>定义表结构</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> TABLE_NAME ( <span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, num1 <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span>);</div></pre></td></tr></table></figure>
+<p>上面代码创建了一张表，表中有两个属性，分别为整形自增的组建，<code>PRIMARY KEY</code>表示主键，<code>AUTO_INCREMENT</code>表示该属性自增。<br>当创建表之后，可以通过<code>desc TABLE_NAME;</code>，<code>describe TABLE_NAME</code>或者<code>show columns from TABLE_NAME</code>来查看表结构。<br>如果需要查看数据库里所有的表时，可以通过<code>show tables</code>来查询。以下创建两张表，person表和department表。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> person(<span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span>);</div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> department(<span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span>);</div></pre></td></tr></table></figure>
+<p>当我们定义完表后，还可以通过相关DDL语言进行表结构的修改。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> TABLE_NAME <span class="keyword">add</span> COLUMNS_NAME COLUMNS_TYPE;</div></pre></td></tr></table></figure>
+<p>以上代码用于修改表的结构，可以通过<code>ALTER</code>命令来对表的字段进行增删改。</p>
+<ul>
+<li>增加字段 <code>add COLUMNS_NAME COLUMNS_TYPE;</code> 。</li>
+<li>删除字段 <code>drop COLUMNS_NAME;</code>。</li>
+<li>修改字段名称 <code>change old_COLUMNS_NAME new_COLUMNS_NAME COLUMNS_TYPE</code>（修改字段名称时，需要重新制定字段的类型）。</li>
+<li>修改字段的类型 <code>modify COLUMNS_NAME new_COLUMNS_TYPE</code>.</li>
+</ul>
+<p>目前数据库里有两张表，分别为<code>person</code>和<code>department</code>表。我们可以通过修改表的结构来关联二者。<br>我们为person表添加指向department表的外键。<br>首先，先在person表添加一个存储外键的字段<code>dp_fk</code>,其数据类型需要与department的主键相同。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> person <span class="keyword">add</span> dp_fk <span class="built_in">int</span>;</div></pre></td></tr></table></figure>
+<p>然后引入关联。由于如果表的主键需要为其他表的外键，则该主键必须是唯一的，因此需要为<code>department</code>表的主键添加唯一约束。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alter</span> <span class="keyword">table</span> department <span class="keyword">change</span> <span class="keyword">id</span> <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">UNIQUE</span>;</div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> person <span class="keyword">add</span> <span class="keyword">CONSTRAINT</span> fk_p_dp foreign <span class="keyword">key</span>(dp_fk) <span class="keyword">REFERENCES</span> department(<span class="keyword">id</span>) <span class="keyword">on</span> <span class="keyword">delete</span> restrict <span class="keyword">on</span> <span class="keyword">update</span> restrict;</div></pre></td></tr></table></figure>
+<hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn///"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn//">http://xuhuiqiang.cn//</a>sqlBasic/</h6><hr>
+
+        
         </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2016/08/14/threadAbstract/">Java多线程简略图谱</a>
-        </h1>
-    
-
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2016/08/14/threadAbstract/">
-            <time datetime="2016-08-14T08:13:12.000Z" itemprop="datePublished">2016-08-14</time>
-        </a>
-    </div>
+        <footer class="article-footer">
+            <div class="share-container">
 
 
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Java/">Java</a>
-    </div>
 
-                    
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Java/">Java</a>, <a class="tag-link" href="/tags/Thread/">Thread</a>
-    </div>
-
-                </div>
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2016/08/14/jvmMSSum/">Java运行时内存空间摘要</a>
-        </h1>
-    
-
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2016/08/14/jvmMSSum/">
-            <time datetime="2016-08-14T07:40:21.000Z" itemprop="datePublished">2016-08-14</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Java/">Java</a>
-    </div>
-
-                    
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/JVM-Memory-space/">JVM Memory space</a>, <a class="tag-link" href="/tags/Original/">Original</a>
-    </div>
-
-                </div>
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2016/08/13/linkedListAnalysis/">LinkedList源码简析</a>
-        </h1>
-    
-
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2016/08/13/linkedListAnalysis/">
-            <time datetime="2016-08-13T14:34:28.000Z" itemprop="datePublished">2016-08-13</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Java/">Java</a>
-    </div>
-
-                    
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Collection/">Collection</a>, <a class="tag-link" href="/tags/List/">List</a>, <a class="tag-link" href="/tags/Original/">Original</a>
-    </div>
-
-                </div>
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2016/08/13/arrayListAnalysis/">ArrayList源码简析</a>
-        </h1>
-    
-
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2016/08/13/arrayListAnalysis/">
-            <time datetime="2016-08-13T02:46:56.000Z" itemprop="datePublished">2016-08-13</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Java/">Java</a>
-    </div>
-
-                    
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Collection/">Collection</a>, <a class="tag-link" href="/tags/List/">List</a>, <a class="tag-link" href="/tags/Original/">Original</a>
-    </div>
-
-                </div>
-            </div>
-        </div>
-    
 </div>
+
+    <a data-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/" data-id="cirus4h1m0006ggkie0srvk3z" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://xuhuiqiang.cn/2016/08/14/sqlBasic/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/">评论</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2016/08/14/threadAbstract/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Java多线程简略图谱</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    <section id="comments">
+    
+        
+    <div class="ds-thread" data-thread-key="2016/08/14/sqlBasic/" data-title="sqlBasic" data-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/"></div>
+    <style>
+        #ds-thread #ds-reset .ds-textarea-wrapper {
+            background: none;
+        }
+        #ds-reset .ds-avatar img {
+            box-shadow: none;
+        }
+        #ds-reset .ds-gradient-bg {
+            background: #f7f7f7;
+        }
+        #ds-thread #ds-reset li.ds-tab a {
+            border-radius: 3px;
+        }
+        #ds-thread #ds-reset .ds-post-button {
+            color: white;
+            border: none;
+            box-shadow: none;
+            background: #d32;
+            text-shadow: none;
+            font-weight: normal;
+            font-family: 'Microsoft Yahei';
+        }
+        #ds-thread #ds-reset .ds-post-button:hover {
+            color: white;
+            background: #DE594C;
+        }
+        #ds-thread #ds-reset .ds-post-button:active {
+            background: #d32;
+        }
+        #ds-smilies-tooltip ul.ds-smilies-tabs li a.ds-current {
+            color: white;
+            background: #d32;
+            box-shadow: none;
+            text-shadow: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
+    </section>
+
 </section>
             
                 <aside id="sidebar">
