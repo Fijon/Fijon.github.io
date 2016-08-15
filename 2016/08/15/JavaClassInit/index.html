@@ -3,20 +3,18 @@
 <head>
     <meta charset="utf-8">
     
-    <title>menu.Java多线程简略图谱 | 呵呵</title>
+    <title>menu.Java类的初始化顺序 | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Java多线程相关知识摘要">
+    <meta name="description" content="Java类初始化顺序">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java多线程简略图谱">
-<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/14/threadAbstract/index.html">
+<meta property="og:title" content="Java类的初始化顺序">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/15/JavaClassInit/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="Java多线程相关知识摘要">
-<meta property="og:image" content="https://oa33v4wla.qnssl.com/ThreadSum.png">
-<meta property="og:updated_time" content="2016-08-14T08:34:05.057Z">
+<meta property="og:description" content="Java类初始化顺序">
+<meta property="og:updated_time" content="2016-08-15T04:34:15.507Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java多线程简略图谱">
-<meta name="twitter:description" content="Java多线程相关知识摘要">
-<meta name="twitter:image" content="https://oa33v4wla.qnssl.com/ThreadSum.png">
+<meta name="twitter:title" content="Java类的初始化顺序">
+<meta name="twitter:description" content="Java类初始化顺序">
     
 
     
@@ -186,7 +184,7 @@
 </aside>
 
             
-            <section id="main"><article id="post-threadAbstract" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-JavaClassInit" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -195,7 +193,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            Java多线程简略图谱
+            Java类的初始化顺序
         </h1>
     
 
@@ -203,8 +201,8 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2016/08/14/threadAbstract/">
-            <time datetime="2016-08-14T08:13:12.000Z" itemprop="datePublished">2016-08-14</time>
+        <a href="/2016/08/15/JavaClassInit/">
+            <time datetime="2016-08-15T02:21:25.000Z" itemprop="datePublished">2016-08-15</time>
         </a>
     </div>
 
@@ -218,7 +216,7 @@
                     
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Java/">Java</a>, <a class="tag-link" href="/tags/Thread/">Thread</a>
+        <a class="tag-link" href="/tags/Java/">Java</a>
     </div>
 
                 </div>
@@ -227,10 +225,29 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>Java线程相关知识简略图谱！！！<br><a id="more"></a><br>内容看上去内容太多，先挖个坑有空做成系列博文。<br>先来个大图！！！<br><img src="https://oa33v4wla.qnssl.com/ThreadSum.png" alt="Java多线程简略图谱"></p>
-<p>PS：如果图片不清晰，可以下载源文件：<a href="https://oa33v4wla.qnssl.com/xmind/Java_Thread.xmind" target="_blank" rel="external">点我下载</a> 。可使用XMind软件打开！！！</p>
+            <p>一篇由师弟引发的关于Java类初始化顺序的博文~~~~<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本篇博文讲的是Java类的实例化顺序。</p>
+<h2 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h2><p>昨天晚上在整理个人笔记时，师弟直接发了一张StackOverFlow异常的图片，问如何解决该问题。。。瞬间就哔了某种动物了。。。没有具体信息你让我怎么去定位问题。从之后异常的详细信息上看，是两个类不断的实例化导致的栈溢出。问题可抽象为以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSecond</span></span>&#123;</div><div class="line">	TestFirst a = <span class="keyword">new</span> TestFirst();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestFirst</span></span>&#123;</div><div class="line">	TestSecond b = <span class="keyword">new</span> TestSecond();</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">		<span class="keyword">new</span> TestFirst();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过<code>javac TestB.java</code>，<code>javac TestA.java</code>编译后，通过<code>java TestA</code>运行TestA，程序运行抛出异常，是不断的循环<br><code>at TestA.&lt;init&gt;(TestA.java:3)</code>，<code>at TestB.&lt;init&gt;(TestB.java:2)</code>两个错误。从<code>init</code>可以知道是在实例化<code>TestA</code>和<code>TestB</code>的过程中出错。其出错的原因在于不明确类的实例化过程。</p>
+<h2 id="类的实例化过程"><a href="#类的实例化过程" class="headerlink" title="类的实例化过程"></a>类的实例化过程</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestA</span></span>&#123;</div><div class="line">	<span class="keyword">static</span> <span class="keyword">int</span> num = <span class="number">0</span>;</div><div class="line">	<span class="keyword">static</span> String staName = <span class="string">"one"</span>;</div><div class="line">	String dynName = <span class="string">"two"</span>;</div><div class="line">	String dynNameSec ;</div><div class="line">	<span class="keyword">static</span> String strNameSec;</div><div class="line"></div><div class="line">	<span class="comment">//第一个静态代码块</span></div><div class="line">	<span class="keyword">static</span>&#123;</div><div class="line">		System.out.printf(<span class="string">"num: %d, staName: %s, strNameSec: %s ,strAfter: %s\n"</span>, num, staName, strNameSec,strAfter);</div><div class="line">		num++;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//第二个静态代码块</span></div><div class="line">	<span class="keyword">static</span>&#123;</div><div class="line">		strNameSec = <span class="string">"static after"</span></div><div class="line">		System.out.printf(<span class="string">"num: %d, staName: %s, strNameSec: %s ,strAfter: %s\n"</span>, num, staName, strNameSec,strAfter);</div><div class="line">		num++;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// 第一个代码块</span></div><div class="line">	&#123;</div><div class="line">		dynNameSec = <span class="string">"second"</span>;</div><div class="line">		System.out.printf(<span class="string">"num: %d, staName: %s, dynName: %s\n"</span>, num++, staName, dynName);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//// 第二个代码块</span></div><div class="line">	&#123;</div><div class="line">		System.out.printf(<span class="string">"num: %d, dynNameSec: %s, dynName: %s\n"</span>, num++, dynNameSec, dynName);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">static</span>  String strAfter = <span class="string">"after"</span>;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">		<span class="comment">//new TestA();</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>先把<code>new TestA()</code>注释，重新编译执行后可以看到输出结果（截图麻烦，直接写结果）：<br><code>num: 0, staName: one, strNameSec: null ,strAfter: null</code><br><code>num: 1, staName: one, strNameSec: static after ,strAfter: null</code><br>调换两个静态代码块的位置，输出结果：<br><code>num: 0, staName: one, strNameSec: static after ,strAfter: null</code><br><code>num: 1, staName: one, strNameSec: static after ,strAfter: null</code><br>由此可以看到静态的代码块的执行顺序与其位置有关。并且静态代码块会在加载类的Class代码的时候便开始声明和初始化静态变量并执行静态代码块。</p>
+<p>换回代码块的位置，取消注释，重新编译执行后结果为：<br><code>num: 0, staName: one, strNameSec: null ,strAfter: null</code><br><code>num: 1, staName: one, strNameSec: static after ,strAfter: null</code><br><code>num: 2, staName: one, dynName: two</code><br><code>num: 3, dynNameSec: second, dynName: two</code><br>将两个静态代码块的位置放在非静态代码块的后边，重新编译执行结果为：<br><code>num: 0, staName: one, strNameSec: null ,strAfter: null</code><br><code>num: 1, staName: one, strNameSec: static after ,strAfter: null</code><br><code>num: 2, staName: one, dynName: two</code><br><code>num: 3, dynNameSec: second, dynName: two</code><br>可以发现调换位置后的结果与调换前的结果相同。因此静态代码块的执行比非静态代码要先。</p>
+<p>互换两个非静态代码块的位置，重新编译执行，结果为：<br><code>num: 0, staName: one, strNameSec: null ,strAfter: null</code><br><code>num: 1, staName: one, strNameSec: static after ,strAfter: null</code><br><code>num: 2, dynNameSec: null, dynName: two</code><br><code>num: 3, staName: one, dynName: two</code><br>从以上代码可以看出，类在实例化的顺序是：</p>
+<ul>
+<li><em><em>先声明静态成员变量，并随后执行静态代码块。</em></em></li>
+<li><em><em>声明非静态成员变量，并执行非静态代码块。</em></em></li>
+<li><em><em>最后执行构造方法。</em></em></li>
+</ul>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>回到最开始的问题：<code>TestFirst</code>在实例化时，需要声明并初始化<code>TestSecond</code>，因此，<code>new TestFirst()</code>时，会首先去执行<br><code>TestSecond b = new TestSecond();</code>，而在初始化<code>TestSecond</code>的过程时，又要先获取<code>TestFirst()</code>对象。因此造成一个循环调用的结果，最后导致栈空间溢出。<br>简单的解决方法：延迟两个变量的初始化，仅仅对两个变量进行声明。改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSecond</span></span>&#123;</div><div class="line">	TestFirst a;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setA</span><span class="params">(TestFirst a)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.a = a;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestFirst</span></span>&#123;</div><div class="line">	TestSecond b;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setB</span><span class="params">(TestSecond b)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.b = b;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">		TestSecond b = <span class="keyword">new</span> TestSecond();</div><div class="line">		TestFirst a = <span class="keyword">new</span> TestFirst();</div><div class="line">		a.setB(b);</div><div class="line">		b.setA(a);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="遗留问题："><a href="#遗留问题：" class="headerlink" title="遗留问题："></a>遗留问题：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestC</span></span>&#123;</div><div class="line">	<span class="keyword">static</span> TestB B = <span class="keyword">new</span> TestB();</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">		<span class="keyword">new</span> TestC();</div><div class="line">		System.out.println(<span class="string">"one"</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestB</span></span>&#123;</div><div class="line">	TestC c = <span class="keyword">new</span> TestC();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>最后的输出是：one。</p>
+<p>对于类的初始化顺序还是有点疑惑！！！！</p>
 <hr>
-<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn///"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn//">http://xuhuiqiang.cn//</a>Java多线程简略图谱/</h6><hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn///"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn//">http://xuhuiqiang.cn//</a>Java类的初始化顺序/</h6><hr>
 
         
         </div>
@@ -241,7 +258,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/08/14/threadAbstract/" data-id="cirvjrjb7000cw8kic4oj6ipi" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/08/15/JavaClassInit/" data-id="cirvjrjac0000w8kivb75mopn" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -309,7 +326,7 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/2016/08/14/threadAbstract/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/14/threadAbstract/">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/08/15/JavaClassInit/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/15/JavaClassInit/">评论</a>
     
 
         </footer>
@@ -318,19 +335,10 @@
         
 <nav id="article-nav">
     
-        <a href="/2016/08/14/sqlBasic/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">上一篇</strong>
-            <div class="article-nav-title">
-                
-                    sqlBasic
-                
-            </div>
-        </a>
     
-    
-        <a href="/2016/08/14/jvmMSSum/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2016/08/14/sqlBasic/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">下一篇</strong>
-            <div class="article-nav-title">Java运行时内存空间摘要</div>
+            <div class="article-nav-title">sqlBasic</div>
         </a>
     
 </nav>
@@ -344,7 +352,7 @@
     <section id="comments">
     
         
-    <div class="ds-thread" data-thread-key="2016/08/14/threadAbstract/" data-title="Java多线程简略图谱" data-url="http://xuhuiqiang.cn/2016/08/14/threadAbstract/"></div>
+    <div class="ds-thread" data-thread-key="2016/08/15/JavaClassInit/" data-title="Java类的初始化顺序" data-url="http://xuhuiqiang.cn/2016/08/15/JavaClassInit/"></div>
     <style>
         #ds-thread #ds-reset .ds-textarea-wrapper {
             background: none;
