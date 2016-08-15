@@ -5,16 +5,16 @@
     
     <title>menu.java线程基础 | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Java线程基础系列（-）">
+    <meta name="description" content="Java线程基础系列（一）Thread与Runnable">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java线程基础">
 <meta property="og:url" content="http://xuhuiqiang.cn/2016/08/15/threadBegin/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="Java线程基础系列（-）">
-<meta property="og:updated_time" content="2016-08-15T12:30:27.247Z">
+<meta property="og:description" content="Java线程基础系列（一）Thread与Runnable">
+<meta property="og:updated_time" content="2016-08-15T14:05:49.494Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java线程基础">
-<meta name="twitter:description" content="Java线程基础系列（-）">
+<meta name="twitter:description" content="Java线程基础系列（一）Thread与Runnable">
     
 
     
@@ -150,11 +150,11 @@
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                7
+                8
                 <span>文章</span>
             </div>
             <div class="article-info-block">
-                8
+                9
                 <span>标签</span>
             </div>
         </div>
@@ -225,7 +225,7 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>Java线程基础系列（-）<br><a id="more"></a></p>
+            <p>Java线程基础系列（一）<br>Thread与Runnable<br><a id="more"></a></p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Java线程一直是我的薄弱部分，平时很少用到它。就算是用到，也是基于别人封装好的基础上进行开发操作。因此有必要对Java线程进行一次梳理总结。<br>简略图谱看这里<a href="http://xuhuiqiang.cn/2016/08/14/threadAbstract/">点我跳转哦！</a>。</p>
 <h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><code>并发</code>：在周期时间段内，程序同时执行；<br><code>并行</code>：同一时刻内，程序同时执行。<br>进程的引入是为了程序能够并发执行，并且可以对并发的程序加以描述和控制。进程是程序的一次执行，各个进程之间按各自独立的、不可预知的速向前推进（以异步的方式运行）。对进程控制仅仅是激活，挂起，调度等操作，而我们在进行这些操作时并不知道进程已经执行到何种程度。在进程没有有引入线程的概念前，进程是系统进行资源分配和调度分派的基本单位。</p>
 <p>线程：线程的引入是为了减少程序在并发执行时所付出的时空开销，从而使OS具有更好的并发性。线程具有进程的许多特征，因此也被称为轻型进程。引入了线程的进程不再是一个可执行的实体，也不再是调度分派的基本单位。线程称为OS独立调度和分派的基本单位，进程下的线程共享进程资源。而进程成为OS分派资源的基本单位。</p>
@@ -256,8 +256,9 @@
 <p>则其输出结果永远为：<code>0 0</code>；</p>
 <p><em>TIPS:</em></p>
 <p><em>我们在实现一个线程的时候，应该考虑使用实现Runnable接口的方法，并使用<code>new Thread(Runnable)</code>的调用方式。</em></p>
+<p>ps：线程池做的笔记比较乱，估计花的时间比较久。。。</p>
 <hr>
-<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/">http://xuhuiqiang.cn/</a></h6><hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-15-threadBegin"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-15-threadBegin" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/15/threadBegin/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/15/threadBegin/">http://xuhuiqiang.cn/2016/08/15/threadBegin/</a></h6><hr>
 
         
         </div>
@@ -268,7 +269,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/08/15/threadBegin/" data-id="cirw0r2910008gski92h6z8eh" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/08/15/threadBegin/" data-id="cirw6k8pk000fbcki7c0ove8h" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -345,6 +346,15 @@
         
 <nav id="article-nav">
     
+        <a href="/2016/08/15/hashSetAnalysis/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    HashSet源码简析
+                
+            </div>
+        </a>
+    
     
         <a href="/2016/08/15/JavaClassInit/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">下一篇</strong>
@@ -413,6 +423,25 @@
         <h3 class="widget-title">最新文章</h3>
         <div class="widget">
             <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/08/15/hashSetAnalysis/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/08/15/hashSetAnalysis/" class="title">HashSet源码简析</a></p>
+                            <p class="item-date"><time datetime="2016-08-15T14:21:20.000Z" itemprop="datePublished">2016-08-15</time></p>
+                        </div>
+                    </li>
                 
                     <li>
                         
@@ -490,25 +519,6 @@
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/08/14/jvmMSSum/" class="thumbnail">
-    
-    
-        <span style="background-image:url(https://oa33v4wla.qnssl.com/JvmMsSum.png)" alt="Java运行时内存空间摘要" class="thumbnail-image"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
-                            <p class="item-title"><a href="/2016/08/14/jvmMSSum/" class="title">Java运行时内存空间摘要</a></p>
-                            <p class="item-date"><time datetime="2016-08-14T07:40:21.000Z" itemprop="datePublished">2016-08-14</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -518,7 +528,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">6</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">7</span></li></ul>
         </div>
     </div>
 
@@ -527,7 +537,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">7</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">8</span></li></ul>
         </div>
     </div>
 
@@ -536,7 +546,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">标签</h3>
         <div class="widget">
-            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM-Memory-space/">JVM Memory space</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Original/">Original</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Runable/">Runable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/">Thread</a><span class="tag-list-count">2</span></li></ul>
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HashSet/">HashSet</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM-Memory-space/">JVM Memory space</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Original/">Original</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Runable/">Runable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/">Thread</a><span class="tag-list-count">2</span></li></ul>
         </div>
     </div>
 
@@ -545,7 +555,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">标签云</h3>
         <div class="widget tagcloud">
-            <a href="/tags/Collection/" style="font-size: 15px;">Collection</a> <a href="/tags/JVM-Memory-space/" style="font-size: 10px;">JVM Memory space</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/List/" style="font-size: 15px;">List</a> <a href="/tags/Original/" style="font-size: 20px;">Original</a> <a href="/tags/Runable/" style="font-size: 10px;">Runable</a> <a href="/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/tags/Thread/" style="font-size: 15px;">Thread</a>
+            <a href="/tags/Collection/" style="font-size: 16.67px;">Collection</a> <a href="/tags/HashSet/" style="font-size: 10px;">HashSet</a> <a href="/tags/JVM-Memory-space/" style="font-size: 10px;">JVM Memory space</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/List/" style="font-size: 13.33px;">List</a> <a href="/tags/Original/" style="font-size: 16.67px;">Original</a> <a href="/tags/Runable/" style="font-size: 10px;">Runable</a> <a href="/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/tags/Thread/" style="font-size: 13.33px;">Thread</a>
         </div>
     </div>
 

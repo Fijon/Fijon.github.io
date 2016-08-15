@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8">
     
-    <title>menu.sqlBasic | 呵呵</title>
+    <title>menu.HashSet源码简析 | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="sql语句基础。">
+    <meta name="description" content="常用Java集合类–HashSet源码简析">
 <meta property="og:type" content="article">
-<meta property="og:title" content="sqlBasic">
-<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/14/sqlBasic/index.html">
+<meta property="og:title" content="HashSet源码简析">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="sql语句基础。">
-<meta property="og:updated_time" content="2016-08-15T12:34:05.054Z">
+<meta property="og:description" content="常用Java集合类–HashSet源码简析">
+<meta property="og:updated_time" content="2016-08-15T15:12:39.547Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="sqlBasic">
-<meta name="twitter:description" content="sql语句基础。">
+<meta name="twitter:title" content="HashSet源码简析">
+<meta name="twitter:description" content="常用Java集合类–HashSet源码简析">
     
 
     
@@ -184,7 +184,7 @@
 </aside>
 
             
-            <section id="main"><article id="post-sqlBasic" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-hashSetAnalysis" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -193,7 +193,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            sqlBasic
+            HashSet源码简析
         </h1>
     
 
@@ -201,8 +201,8 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2016/08/14/sqlBasic/">
-            <time datetime="2016-08-14T15:13:07.000Z" itemprop="datePublished">2016-08-14</time>
+        <a href="/2016/08/15/hashSetAnalysis/">
+            <time datetime="2016-08-15T14:21:20.000Z" itemprop="datePublished">2016-08-15</time>
         </a>
     </div>
 
@@ -210,13 +210,13 @@
                     
     <div class="article-category">
     	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Database/">Database</a>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
     </div>
 
                     
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/SQL/">SQL</a>
+        <a class="tag-link" href="/tags/Collection/">Collection</a>, <a class="tag-link" href="/tags/HashSet/">HashSet</a>, <a class="tag-link" href="/tags/Java/">Java</a>
     </div>
 
                 </div>
@@ -225,50 +225,33 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>sql语句基础。<br><a id="more"></a></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>SQL语言指结果查询语言，用于执行查询的语法，但是也包含了用于更新、插入、和删除记录的语法。主要由：数据定义语言（Data Definition Language，DDL），数据操作语言（Data Manipulation Language，DML），数据控制语言（DataControl Language，DCL）三者构成。</p>
-<h2 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h2><p>DDL用于定义和管理SQL数据库中所有对象的语言，它是我们有能力创建或修改数据库中的相关对象（数据库，表等等）已经他们之间的关系。常用的相关重要语句包括：</p>
+            <p>常用Java集合类–HashSet源码简析<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>HashSet：实现Set接口，并继承自AbstractSet抽象类。其底层有hashMap支持。HashSet不保证Set的迭代顺序，而且集合里边的顺序并非恒久不变。鉴于HashMap支持使用null作为元素，因此HashSet也支持使用null作为元素。鉴于HashSet是由HashMap支持的，因此HashSet的很多操作都是直接调用HashMap方法。如果对HashMap较为熟悉，那么HashSet很容易就能看懂。</p>
+<h2 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h2><p><code>private transient HashMap&lt;E,Object&gt; map</code>：用于存储元素的对象。<br><code>private static final Object PRESENT = new Object()</code>：用于管理底层map对象的一个虚值。</p>
+<p>构造方法：<br>相对于<code>List</code>相关类，HashSet的构造方法有5个。由于HashSet是通过HashMap支持实现的，每一个集合的元素最终都是装入HashMap对象中，因此，其构造方法就是根据参数要求，初始化全局属性<code>map</code>。构造方法如下：</p>
 <ul>
-<li>Create Database：创建数据库</li>
-<li>Alter Database:修改数据库</li>
-<li>Create Table：创建数据库表</li>
-<li>Alter Table：更新表结构</li>
-<li>Drop Table：删除表</li>
-<li>Create Index：创建索引</li>
-<li>Drop Index：删除索引<br>其他还有对存储结构，事务，视图等的相关操作。</li>
+<li><code>public HashSet()</code>：无参构造方法，使用HashMap的无参构造函数初始化该对象，默认容量为16，扩展因子为0.75；</li>
+<li><code>HashSet(Collection&lt;? extends E&gt;)</code>：构造一个包含指定集合中的元素的新的集合。</li>
 </ul>
-<h2 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h2><p>DML是用于操作数据库对象中所包含的数据的语言，其操作对象是记录（record）。其操作方法包括：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</div><div class="line">       map = <span class="keyword">new</span> HashMap&lt;&gt;(Math.max((<span class="keyword">int</span>) (c.size()/.<span class="number">75f</span>) + <span class="number">1</span>, <span class="number">16</span>));</div><div class="line">       addAll(c);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>构造方法中之所以进行<code>c.size()/.75f) + 1</code>处理是因为，当HashMap的元素个数达到容量的0.75倍时，就需要扩容。因此为了避免进行扩容，需要将HashMap的容量开辟为<code>c.size()/.75f) + 1</code>。如果该值小于16时，则将HashMap的容量开辟到16。因此可以知道当集合元素个数处于[0,11]范围时，集合的容量为16。<br>+<code>HashSet(int, float)</code>：该构造方法指定了HashMap的初始容量和扩展因子。即当集合的元素个数<code>size &gt;= initialCapacity * loadFactor</code>时，需要对HashMap进行扩容。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">HashSet</span><span class="params">(<span class="keyword">int</span> initialCapacity, <span class="keyword">float</span> loadFactor)</span> </span>&#123;</div><div class="line">    map = <span class="keyword">new</span> HashMap&lt;&gt;(initialCapacity, loadFactor);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
-<li>Insert语句：用于插入新的记录，可以进行批量操作。</li>
-<li>Delete语句：用于删除表中的记录，可批量操作。</li>
-<li>Update语句：更新表中的记录，可批量操作。<br>与DDL不同的是，DML是对记录进行操作，而DDL是对数据库中的对象进行操作。两者的操作对象不同。</li>
+<li><code>public HashSet(int)</code>：设定集合的初始容量，其扩展因子还是0.75。</li>
+<li><code>default HashSet(int, float, boolean)</code>：<code>boolean</code>参数用来区分其他构造方法，该方法非公共方法，仅仅供给<code>linkedHashSet</code>使用。</li>
 </ul>
-<h2 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h2><p>DCL是提供对数据库操作权限的相关操作，比如说数据库授权，数据库角色等等，其操作方法主要有两个：</p>
+<h2 id="成员方法"><a href="#成员方法" class="headerlink" title="成员方法"></a>成员方法</h2><p>集合相对列表来说，不存在指定位置插入，或者指定位置删除以及获取指定位置的元素，这是因为集合是无序的。因此，HashSet提供<code>add(E)</code>，<code>remove(E)</code>，<code>contains(E)</code>。</p>
 <ul>
-<li>Grant：赋予权限。</li>
-<li>Revoke：撤回权限。<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2>实例基于MySql实现。</li>
+<li><code>public boolean add(E e)</code>：从源码中，我们可以看到，集合的元素作为HashMap中的键存储于HashMap对象中，而<code>map</code>对象的值存放一个无意义的<code>Object</code>对象。</li>
 </ul>
-<h3 id="数据库定义"><a href="#数据库定义" class="headerlink" title="数据库定义"></a>数据库定义</h3><h4 id="定义数据库"><a href="#定义数据库" class="headerlink" title="定义数据库"></a>定义数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">drop</span> <span class="keyword">database</span> <span class="keyword">if</span> <span class="keyword">exists</span> DATABASE_Name;</div><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> DATABASE_NAME <span class="keyword">default</span> <span class="built_in">character</span> <span class="keyword">set</span> utf8 ;</div></pre></td></tr></table></figure>
-<p>首先判断数据库系统中是否存在同名数据库，如果存在则删除（通常不直接删除数据库）。<br>创建语句表示：创建了一个名为DATABASE_NAME的数据库，其字符存储的格式为utf8。<br>我们创建一个名为Test的数据库：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> <span class="keyword">Test</span> <span class="keyword">default</span> <span class="built_in">character</span> <span class="keyword">set</span> utf8 ;</div></pre></td></tr></table></figure>
-<h4 id="定义表结构"><a href="#定义表结构" class="headerlink" title="定义表结构"></a>定义表结构</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> TABLE_NAME ( <span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, num1 <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span>);</div></pre></td></tr></table></figure>
-<p>上面代码创建了一张表，表中有两个属性，分别为整形自增的组建，<code>PRIMARY KEY</code>表示主键，<code>AUTO_INCREMENT</code>表示该属性自增。<br>当创建表之后，可以通过<code>desc TABLE_NAME;</code>，<code>describe TABLE_NAME</code>或者<code>show columns from TABLE_NAME</code>来查看表结构。<br>如果需要查看数据库里所有的表时，可以通过<code>show tables</code>来查询。以下创建两张表，person表和department表。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> person(<span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span>);</div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> department(<span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span>);</div></pre></td></tr></table></figure>
-<p>当我们定义完表后，还可以通过相关DDL语言进行表结构的修改。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> TABLE_NAME <span class="keyword">add</span> COLUMNS_NAME COLUMNS_TYPE;</div></pre></td></tr></table></figure>
-<p>以上代码用于修改表的结构，可以通过<code>ALTER</code>命令来对表的字段进行增删改。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> map.put(e, PRESENT)==<span class="keyword">null</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <ul>
-<li>增加字段 <code>add COLUMNS_NAME COLUMNS_TYPE;</code> 。</li>
-<li>删除字段 <code>drop COLUMNS_NAME;</code>。</li>
-<li>修改字段名称 <code>change old_COLUMNS_NAME new_COLUMNS_NAME COLUMNS_TYPE</code>（修改字段名称时，需要重新制定字段的类型）。</li>
-<li>修改字段的类型 <code>modify COLUMNS_NAME new_COLUMNS_TYPE</code>.</li>
+<li><code>public boolean remove(Object o)</code>：删除指定的对象，直接返回<code>map.remove(o)==PRESENT</code>。</li>
+<li><code>public boolean contains(Object o)</code>：判断是否包含参数元素。直接调用<code>map.containsKey(o)</code>。</li>
+<li><code>public void clear()</code>：直接清空整个集合的元素。</li>
 </ul>
-<p>目前数据库里有两张表，分别为<code>person</code>和<code>department</code>表。我们可以通过修改表的结构来关联二者。<br>我们为person表添加指向department表的外键。<br>首先，先在person表添加一个存储外键的字段<code>dp_fk</code>,其数据类型需要与department的主键相同。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> person <span class="keyword">add</span> dp_fk <span class="built_in">int</span>;</div></pre></td></tr></table></figure>
-<p>然后引入关联。由于如果表的主键需要为其他表的外键，则该主键必须是唯一的，因此需要为<code>department</code>表的主键添加唯一约束。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alter</span> <span class="keyword">table</span> department <span class="keyword">change</span> <span class="keyword">id</span> <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">UNIQUE</span>;</div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> person <span class="keyword">add</span> <span class="keyword">CONSTRAINT</span> fk_p_dp foreign <span class="keyword">key</span>(dp_fk) <span class="keyword">REFERENCES</span> department(<span class="keyword">id</span>) <span class="keyword">on</span> <span class="keyword">delete</span> restrict <span class="keyword">on</span> <span class="keyword">update</span> restrict;</div></pre></td></tr></table></figure>
 <hr>
-<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-sqlBasic"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-sqlBasic" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/14/sqlBasic/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/14/sqlBasic/">http://xuhuiqiang.cn/2016/08/14/sqlBasic/</a></h6><hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-15-hashSetAnalysis"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-15-hashSetAnalysis" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/">http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/</a></h6><hr>
 
         
         </div>
@@ -279,7 +262,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/" data-id="cirw6k8pf000dbcki9xejd4dd" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/" data-id="cirw6k8ox0006bckilmkficab" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -347,7 +330,7 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/2016/08/14/sqlBasic/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/">评论</a>
     
 
         </footer>
@@ -356,19 +339,10 @@
         
 <nav id="article-nav">
     
-        <a href="/2016/08/15/JavaClassInit/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">上一篇</strong>
-            <div class="article-nav-title">
-                
-                    Java类的初始化顺序
-                
-            </div>
-        </a>
     
-    
-        <a href="/2016/08/14/threadAbstract/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2016/08/15/threadBegin/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">下一篇</strong>
-            <div class="article-nav-title">Java多线程简略图谱</div>
+            <div class="article-nav-title">java线程基础</div>
         </a>
     
 </nav>
@@ -382,7 +356,7 @@
     <section id="comments">
     
         
-    <div class="ds-thread" data-thread-key="2016/08/14/sqlBasic/" data-title="sqlBasic" data-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/"></div>
+    <div class="ds-thread" data-thread-key="2016/08/15/hashSetAnalysis/" data-title="HashSet源码简析" data-url="http://xuhuiqiang.cn/2016/08/15/hashSetAnalysis/"></div>
     <style>
         #ds-thread #ds-reset .ds-textarea-wrapper {
             background: none;
