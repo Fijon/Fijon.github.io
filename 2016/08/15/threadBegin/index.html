@@ -3,20 +3,18 @@
 <head>
     <meta charset="utf-8">
     
-    <title>menu.关于我 | 呵呵</title>
+    <title>menu.java线程基础 | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！">
-<meta property="og:type" content="website">
-<meta property="og:title" content="关于我">
-<meta property="og:url" content="http://xuhuiqiang.cn/about/index.html">
+    <meta name="description" content="Java线程基础系列（-）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java线程基础">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/15/threadBegin/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！">
-<meta property="og:image" content="https://oa33v4wla.qnssl.com/pay.png-moneyCode">
-<meta property="og:updated_time" content="2016-08-13T13:08:25.376Z">
+<meta property="og:description" content="Java线程基础系列（-）">
+<meta property="og:updated_time" content="2016-08-15T12:30:27.247Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于我">
-<meta name="twitter:description" content="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！">
-<meta name="twitter:image" content="https://oa33v4wla.qnssl.com/pay.png-moneyCode">
+<meta name="twitter:title" content="java线程基础">
+<meta name="twitter:description" content="Java线程基础系列（-）">
     
 
     
@@ -186,7 +184,7 @@
 </aside>
 
             
-            <section id="main"><article id="page-undefined" class="article article-type-page" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-threadBegin" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -194,8 +192,8 @@
             <header class="article-header">
                 
     
-        <h1 itemprop="name">
-            <a class="article-title" href="/about/index.html">关于我</a>
+        <h1 class="article-title" itemprop="name">
+            java线程基础
         </h1>
     
 
@@ -203,21 +201,63 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/about/index.html">
-            <time datetime="2016-08-13T13:08:25.376Z" itemprop="datePublished">2016-08-13</time>
+        <a href="/2016/08/15/threadBegin/">
+            <time datetime="2016-08-15T07:13:40.000Z" itemprop="datePublished">2016-08-15</time>
         </a>
     </div>
 
 
                     
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
                     
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/Java/">Java</a>, <a class="tag-link" href="/tags/Runable/">Runable</a>, <a class="tag-link" href="/tags/Thread/">Thread</a>
+    </div>
+
                 </div>
             </header>
         
         <div class="article-entry" itemprop="articleBody">
         
             
-            <h5 id="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！"><a href="#各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！" class="headerlink" title="各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！"></a>各位同仁好！小生本住南粤大地，现于金陵东大求学！人称码农，自认码畜，目标攻城狮！</h5><h5 id="如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！"><a href="#如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！" class="headerlink" title="如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！"></a>如果你觉得我的博文对你有帮助，请你能够微信扫码赞助一下！！！</h5><p><img src="https://oa33v4wla.qnssl.com/pay.png-moneyCode" alt="微信扫码"> </p>
+            <p>Java线程基础系列（-）<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Java线程一直是我的薄弱部分，平时很少用到它。就算是用到，也是基于别人封装好的基础上进行开发操作。因此有必要对Java线程进行一次梳理总结。<br>简略图谱看这里<a href="http://xuhuiqiang.cn/2016/08/14/threadAbstract/">点我跳转哦！</a>。</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><code>并发</code>：在周期时间段内，程序同时执行；<br><code>并行</code>：同一时刻内，程序同时执行。<br>进程的引入是为了程序能够并发执行，并且可以对并发的程序加以描述和控制。进程是程序的一次执行，各个进程之间按各自独立的、不可预知的速向前推进（以异步的方式运行）。对进程控制仅仅是激活，挂起，调度等操作，而我们在进行这些操作时并不知道进程已经执行到何种程度。在进程没有有引入线程的概念前，进程是系统进行资源分配和调度分派的基本单位。</p>
+<p>线程：线程的引入是为了减少程序在并发执行时所付出的时空开销，从而使OS具有更好的并发性。线程具有进程的许多特征，因此也被称为轻型进程。引入了线程的进程不再是一个可执行的实体，也不再是调度分派的基本单位。线程称为OS独立调度和分派的基本单位，进程下的线程共享进程资源。而进程成为OS分派资源的基本单位。</p>
+<h2 id="Java线程"><a href="#Java线程" class="headerlink" title="Java线程"></a>Java线程</h2><p>Java线程的创建有多种：</p>
+<ul>
+<li>实现Runnable接口</li>
+<li>继承Thread类</li>
+<li>通过线程池</li>
+</ul>
+<h3 id="Runnable接口"><a href="#Runnable接口" class="headerlink" title="Runnable接口"></a>Runnable接口</h3><p>通过Runnable接口实现线程极其简单，仅仅需要实现<code>run()</code>方法就可了。<code>run()</code>方法是线程的执行体，我们的线程执行逻辑便是在该方法实现。当<code>run()</code>执行完毕，线程结束。</p>
+<h3 id="Thread类"><a href="#Thread类" class="headerlink" title="Thread类"></a>Thread类</h3><p>通过实现<code>Runnable</code>接口创建的线程极其简单粗暴，所有的线程的运行参数都是系统默认的。因此Java提供了一个可以设置线程运行参数的<code>Thread</code>类。<code>Thread</code>实现了<code>Runnable</code>接口，并向外暴露了极多的方法。常用的<code>Thread</code>方法：</p>
+<ul>
+<li><code>sleep()</code>：使当前正在执行的线程休眠让出cpu，其它线程获取CPU，但并不释放其所持有的资源锁。</li>
+<li><code>join()</code>：当线程调用该方法时，宿主线程需要等待该线程执行结束才能继续，即宿主线程会被阻塞。调用该方法可使异步线程变为同步线程。</li>
+<li><code>interrupt()</code>：中断调用者线程，被中断的线程会抛出InterruptedException。当抛出异常时，线程并不会状态并不会立刻改变，并且可以通过<code>isInterrupted()</code>方法检测线程状态。</li>
+<li><code>yield()</code>：暂停当前正在执行的线程对象，执行其他线程。等同于sleep()；线程并不阻塞，而是由运行状态转为就绪状态。</li>
+</ul>
+<p><code>sleep()</code>与<code>Object.wait()</code>方法的区别：<br><code>wait()</code>：此方法让当前持有该对象的线程进入阻塞状态，并将该线程放入对象的等待池中，然后该线程放弃此资源对象上的所有同步请求，即释放资源锁。当该线程重新获取到该资源对象时，该对象和当前线程的同步状态与调用<code>wait()</code>方法时的情况完全相同。注意：在调用<code>wait()</code>方法时，需要对该资源加锁，或者使用<code>synchronized</code>关键字括起来。</p>
+<p>与<code>wait()</code>配套使用的方法还有：<code>notify()</code>，<code>notifyAll()</code>。<code>notify()</code>用于唤醒在对象监视器上等待的单个线程。如果有多个线程，则任意唤醒其中的一个线程。而<code>notifyAll()</code>一次唤醒此对象上等待的所有线程，所有线程以常规方式在该对象上主动同步的其他所有线程进行竞争。</p>
+<h4 id="Thread与Runnable的区别"><a href="#Thread与Runnable的区别" class="headerlink" title="Thread与Runnable的区别"></a>Thread与Runnable的区别</h4><p>直接实现<code>Runnable</code>接口的仅仅有一个<code>run()</code>方法，并且在获取线程对象后，一旦调用<code>run()</code>方法，线程立即启动执行。由于<code>Thread</code>类实现<code>Runnable</code>接口，可以直接查看<code>Thread</code>的<code>run()</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (target != <span class="keyword">null</span>) &#123;</div><div class="line">        target.run();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>target</code>为Runnable型成员变量，在初始化方法中<code>init()</code>完成其初始化。因此我们在自定义的线程类中，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadOne</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">//逻辑代码</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在<code>ThreadOne</code>中,我们复写了<code>run()</code>方法，由于Java多态的性质，我们是直接调用了<code>ThreadOne</code>方法，而不会调用父类方法。因此可以利用该特点，写出共享资源的线程类来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTemplate</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> count;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			Thread.sleep(<span class="number">500</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		System.out.printf(<span class="string">"%d "</span>, count++);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThread</span> </span>&#123;</div><div class="line">	Runnable run = <span class="keyword">new</span> ThreadTemplate();</div><div class="line">		Thread one = <span class="keyword">new</span> Thread(run);</div><div class="line">		Thread two = <span class="keyword">new</span> Thread(run);</div><div class="line">		</div><div class="line">		one.start();</div><div class="line">		two.start();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>执行以上代码：输出结果不定，有可能为<code>0 1</code>，也有可能为<code>1 0</code>，甚至有可能为<code>0 0</code>;<br>修改<code>TestThread</code>的主方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Thread one = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadTemplate());</div><div class="line">Thread two = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadTemplate());</div><div class="line">		</div><div class="line">one.start();</div><div class="line">two.start();</div></pre></td></tr></table></figure>
+<p>则其输出结果永远为：<code>0 0</code>；</p>
+<p><em>TIPS:</em></p>
+<p><em>我们在实现一个线程的时候，应该考虑使用实现Runnable接口的方法，并使用<code>new Thread(Runnable)</code>的调用方式。</em></p>
+<hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/">http://xuhuiqiang.cn/</a></h6><hr>
 
         
         </div>
@@ -228,7 +268,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/about/index.html" data-id="cirw0r2720001gski7n70k8zp" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/08/15/threadBegin/" data-id="cirw0r2910008gski92h6z8eh" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -296,13 +336,73 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/about/index.html#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/about/index.html">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/08/15/threadBegin/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/15/threadBegin/">评论</a>
     
 
         </footer>
     </div>
     
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2016/08/15/JavaClassInit/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Java类的初始化顺序</div>
+        </a>
+    
+</nav>
+
+
+    
 </article>
+
+
+    
+    <section id="comments">
+    
+        
+    <div class="ds-thread" data-thread-key="2016/08/15/threadBegin/" data-title="java线程基础" data-url="http://xuhuiqiang.cn/2016/08/15/threadBegin/"></div>
+    <style>
+        #ds-thread #ds-reset .ds-textarea-wrapper {
+            background: none;
+        }
+        #ds-reset .ds-avatar img {
+            box-shadow: none;
+        }
+        #ds-reset .ds-gradient-bg {
+            background: #f7f7f7;
+        }
+        #ds-thread #ds-reset li.ds-tab a {
+            border-radius: 3px;
+        }
+        #ds-thread #ds-reset .ds-post-button {
+            color: white;
+            border: none;
+            box-shadow: none;
+            background: #d32;
+            text-shadow: none;
+            font-weight: normal;
+            font-family: 'Microsoft Yahei';
+        }
+        #ds-thread #ds-reset .ds-post-button:hover {
+            color: white;
+            background: #DE594C;
+        }
+        #ds-thread #ds-reset .ds-post-button:active {
+            background: #d32;
+        }
+        #ds-smilies-tooltip ul.ds-smilies-tabs li a.ds-current {
+            color: white;
+            background: #d32;
+            box-shadow: none;
+            text-shadow: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
+    </section>
 
 </section>
             
