@@ -3,20 +3,18 @@
 <head>
     <meta charset="utf-8">
     
-    <title>menu.Java多线程简略图谱 | 呵呵</title>
+    <title>menu.java内存区域简析 | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Java多线程相关知识摘要">
+    <meta name="description" content="JVM内存区域简析">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java多线程简略图谱">
-<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/14/threadAbstract/index.html">
+<meta property="og:title" content="java内存区域简析">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/09/08/java-memory-type/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="Java多线程相关知识摘要">
-<meta property="og:image" content="https://oa33v4wla.qnssl.com/ThreadSum.png">
-<meta property="og:updated_time" content="2016-08-15T12:33:04.832Z">
+<meta property="og:description" content="JVM内存区域简析">
+<meta property="og:updated_time" content="2016-09-08T12:36:38.515Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java多线程简略图谱">
-<meta name="twitter:description" content="Java多线程相关知识摘要">
-<meta name="twitter:image" content="https://oa33v4wla.qnssl.com/ThreadSum.png">
+<meta name="twitter:title" content="java内存区域简析">
+<meta name="twitter:description" content="JVM内存区域简析">
     
 
     
@@ -186,7 +184,7 @@
 </aside>
 
             
-            <section id="main"><article id="post-threadAbstract" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-java-memory-type" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -195,7 +193,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            Java多线程简略图谱
+            java内存区域简析
         </h1>
     
 
@@ -203,8 +201,8 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2016/08/14/threadAbstract/">
-            <time datetime="2016-08-14T08:13:12.000Z" itemprop="datePublished">2016-08-14</time>
+        <a href="/2016/09/08/java-memory-type/">
+            <time datetime="2016-09-08T12:18:56.000Z" itemprop="datePublished">2016-09-08</time>
         </a>
     </div>
 
@@ -218,7 +216,7 @@
                     
     <div class="article-tag">
         <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/Java/">Java</a>, <a class="tag-link" href="/tags/Thread/">Thread</a>
+        <a class="tag-link" href="/tags/JVM-Memory-space/">JVM Memory space</a>
     </div>
 
                 </div>
@@ -227,10 +225,15 @@
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>Java线程相关知识简略图谱！！！<br><a id="more"></a><br>内容看上去内容太多，先挖个坑有空做成系列博文。<br>先来个大图！！！<br><img src="https://oa33v4wla.qnssl.com/ThreadSum.png" alt="Java多线程简略图谱"></p>
-<p>PS：如果图片不清晰，可以下载源文件：<a href="https://oa33v4wla.qnssl.com/xmind/Java_Thread.xmind" target="_blank" rel="external">点我下载</a> 。可使用XMind软件打开！！！</p>
-<hr>
-<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-threadAbstract"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-threadAbstract" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/14/threadAbstract/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/14/threadAbstract/">http://xuhuiqiang.cn/2016/08/14/threadAbstract/</a></h6><hr>
+            <p>Java虚拟机运行时区域相关定语与说明<br><a id="more"></a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>当我们需要了解Java垃圾回收机制时，就不得不去熟悉JVM运行时的各个数据区。Java运行时区域共有5个部分，分别为堆，栈，方法区，本地方法区，寄存器。</p>
+<h1 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h1><p>堆是一个内存区域，常用于内存的动态分配或者临时分配，主要为类和数组对象提供内存。堆在JVM启动时创建，可以在启动JVM时通过<code>java -Xmx3550m -Xms3550m -Xmn2g -Xss128k</code>等参数进行设置。当Java中创建对象或者数组对象时，就从堆中分配所需内存。当对象或数组不再存在后，由垃圾回收器回收堆内存。当堆内存用完，并且无法为堆分配额外的内存，系统就会产生OutOfMemoryError异常。<br>堆通常分为三个部分，通常把这三部分称为：Young(年轻代)，Tenured(中生代)，Perm(永生代)。</p>
+<h2 id="Young"><a href="#Young" class="headerlink" title="Young"></a>Young</h2><p>其中Young由分为三个部分：Eden，Survivor1和Survivor2，Survivor1和Survivor2二者大小严格相等。可以通过<code>-XX:SurvivorRatio=n</code>参数设置Eden与Survivor的比值。这里指的是Eden：Survivor=n，由于Survivor有两个区，这里设置指的是Eden区与单个Survivor的比值。Survivor的两个区永远只有一个区在工作，当触发垃圾回收时，会将其中的一个Survivor的垃圾回收后移入道另外一个Survivor区中，通常回收时，都是Eden + Survivori = Survivor。经过多次回收后，需要将Survivor的数据移入到Tenured区中。</p>
+<h2 id="Tenured"><a href="#Tenured" class="headerlink" title="Tenured"></a>Tenured</h2><p>Tenured区主要保存生命周期长的对象，一般是一些老的对象，当一些对象在Young复制转移一定的次数以后，对象就会被转移到Tenured区，一般如果系统中用了application级别的缓存，缓存中的对象往往会被转移到这一区间。</p>
+<h2 id="Perm"><a href="#Perm" class="headerlink" title="Perm"></a>Perm</h2><p>Perm代主要保存class,method,filed等对象，该空间一般不会溢出。</p>
+<h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><h1 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h1><h1 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h1><p>#寄存器</p>
+<h1 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h1><hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/">http://xuhuiqiang.cn/</a></h6><hr>
 
         
         </div>
@@ -241,7 +244,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/08/14/threadAbstract/" data-id="cisubjqa9000dt8kib7yl1r7b" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/09/08/java-memory-type/" data-id="cisubjq9k0002t8kiohahr6mp" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -309,7 +312,7 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/2016/08/14/threadAbstract/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/14/threadAbstract/">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/09/08/java-memory-type/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/09/08/java-memory-type/">评论</a>
     
 
         </footer>
@@ -318,19 +321,10 @@
         
 <nav id="article-nav">
     
-        <a href="/2016/08/14/sqlBasic/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">上一篇</strong>
-            <div class="article-nav-title">
-                
-                    sqlBasic
-                
-            </div>
-        </a>
     
-    
-        <a href="/2016/08/14/jvmMSSum/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2016/08/28/threadAnalysis/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">下一篇</strong>
-            <div class="article-nav-title">Java运行时内存空间摘要</div>
+            <div class="article-nav-title">Thread源码简析</div>
         </a>
     
 </nav>
@@ -344,7 +338,7 @@
     <section id="comments">
     
         
-    <div class="ds-thread" data-thread-key="2016/08/14/threadAbstract/" data-title="Java多线程简略图谱" data-url="http://xuhuiqiang.cn/2016/08/14/threadAbstract/"></div>
+    <div class="ds-thread" data-thread-key="2016/09/08/java-memory-type/" data-title="java内存区域简析" data-url="http://xuhuiqiang.cn/2016/09/08/java-memory-type/"></div>
     <style>
         #ds-thread #ds-reset .ds-textarea-wrapper {
             background: none;
