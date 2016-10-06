@@ -11,7 +11,7 @@
 <meta property="og:url" content="http://xuhuiqiang.cn/2016/09/08/java-memory-type/index.html">
 <meta property="og:site_name" content="呵呵">
 <meta property="og:description" content="JVM内存区域简析">
-<meta property="og:updated_time" content="2016-09-08T12:36:38.515Z">
+<meta property="og:updated_time" content="2016-10-06T08:18:22.285Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="java内存区域简析">
 <meta name="twitter:description" content="JVM内存区域简析">
@@ -150,7 +150,7 @@
         </div>
         <div class="article-info profile-block">
             <div class="article-info-block">
-                10
+                11
                 <span>文章</span>
             </div>
             <div class="article-info-block">
@@ -230,10 +230,16 @@
 <h1 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h1><p>堆是一个内存区域，常用于内存的动态分配或者临时分配，主要为类和数组对象提供内存。堆在JVM启动时创建，可以在启动JVM时通过<code>java -Xmx3550m -Xms3550m -Xmn2g -Xss128k</code>等参数进行设置。当Java中创建对象或者数组对象时，就从堆中分配所需内存。当对象或数组不再存在后，由垃圾回收器回收堆内存。当堆内存用完，并且无法为堆分配额外的内存，系统就会产生OutOfMemoryError异常。<br>堆通常分为三个部分，通常把这三部分称为：Young(年轻代)，Tenured(中生代)，Perm(永生代)。</p>
 <h2 id="Young"><a href="#Young" class="headerlink" title="Young"></a>Young</h2><p>其中Young由分为三个部分：Eden，Survivor1和Survivor2，Survivor1和Survivor2二者大小严格相等。可以通过<code>-XX:SurvivorRatio=n</code>参数设置Eden与Survivor的比值。这里指的是Eden：Survivor=n，由于Survivor有两个区，这里设置指的是Eden区与单个Survivor的比值。Survivor的两个区永远只有一个区在工作，当触发垃圾回收时，会将其中的一个Survivor的垃圾回收后移入道另外一个Survivor区中，通常回收时，都是Eden + Survivori = Survivor。经过多次回收后，需要将Survivor的数据移入到Tenured区中。</p>
 <h2 id="Tenured"><a href="#Tenured" class="headerlink" title="Tenured"></a>Tenured</h2><p>Tenured区主要保存生命周期长的对象，一般是一些老的对象，当一些对象在Young复制转移一定的次数以后，对象就会被转移到Tenured区，一般如果系统中用了application级别的缓存，缓存中的对象往往会被转移到这一区间。</p>
-<h2 id="Perm"><a href="#Perm" class="headerlink" title="Perm"></a>Perm</h2><p>Perm代主要保存class,method,filed等对象，该空间一般不会溢出。</p>
-<h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><h1 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h1><h1 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h1><p>#寄存器</p>
-<h1 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h1><hr>
-<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn"><a href="#转载请附上原文链接：http-xuhuiqiang-cn" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/">http://xuhuiqiang.cn/</a></h6><hr>
+<h2 id="Perm"><a href="#Perm" class="headerlink" title="Perm"></a>Perm</h2><p>Perm代主要保存class,method,filed等对象（有时也指代方法区），该空间一般不会溢出。该区域非Java虚拟机规范里的，在不同的JVM版本中，可能有所不同。</p>
+<h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><p>每一个JVM中的线程都有自己私有的Java虚拟机栈（Java Virtual Machine Stack）。栈空间伴随Java线程的创建而创建，栈空间主要用于存储运行时的栈帧，每一个栈帧都存储着一个执行方法的相关数据（局部变量，返回结果等等）以及处理动态链接，和异常分派。栈空间除了出栈、入栈之外，不会再受其他因素的影响。它所使用的内存也不需要保证连续。栈空间主要由栈帧构成，而栈帧随着方法的调用而创建，随着方法结束而销毁，因此栈空间不需要JVM进行垃圾回收。每一个栈帧有以下几个部分：  局部变量表，操作数栈，方法返回地址，指向运行时的常量池的引用，以及附加信息。</p>
+<h2 id="局部变量表"><a href="#局部变量表" class="headerlink" title="局部变量表"></a>局部变量表</h2><p>局部变量表是一个方法中的变量列表，长度在编译期时决定，存储于类或接口的二进制表示之中。局部变量表的类型包括基础数据类型（除去long，double），引用类型和返回值类型。其中基础数据类型中的long和double需要两个局部变量来表示（这也是long和double非原子操作的原因之一）。在使用时，通过局部变量的索引值来使用。<br>虚拟机通过局部变量表来完成方法调用时的参数传递。当调用一个方法时，它的参数按照顺序会在局部变量表中从0开始的连续位置上。如果调用一个实例方法，第0个局部变量将存储调用该实例方法所在对象的引用，后续参数会1开始。  </p>
+<h2 id="操作数栈"><a href="#操作数栈" class="headerlink" title="操作数栈"></a>操作数栈</h2><p>操作数栈是用来存储指令操作的对象的区域。在栈帧创建时，操作数栈是空的，jvm提供部分字节码指令从局部变量表中或者对象实例的字段中复制常量或变量值至操作数栈中，并提供字节码中指令从操作数栈中取出操作数的命令。在调用方法时，操作数栈也是用来存储方法的参数以及接收方法返回结果。与局部变量表不同之处在于，操作数栈是用于接收方法的方法结果，以及调用方法的参数。</p>
+<h1 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h1><p>方法区是可供各个线程共享的运行时内存区域。它存储了每一个类的结构信息，比如运行时常量池，字段，方法数据，构造函数和普通方法的字节码内容，以及一下其他的特殊方法（<clint>,<init>)。</init></clint></p>
+<h1 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h1><p>常量池包括静态常量池和运行时常量池。<br>运行时常量池，运行时的一块数据区域，为class文件中每一个类或接口的常量池表在运行时的表示形式，本块区域保持在方法区中。</p>
+<p>#寄存器<br>JVM可以支持多条线程同时执行，每一个线程都有自己的一个程序指令寄存器。在任意时刻，一条JVM线程只会执行一个方法的代码（并行与并发的区别），正在被线程所执行的方法称为该线程的当前方法（所在栈帧称为当前栈帧，定义该方法的类称为当前类）。如果该方法为非本地方法（无native关键字修饰），寄存器则存储当前正在执行的字节码指令地址；若为本地方法，则存储undefined。</p>
+<h1 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h1><p>JVM实现时可能用到传统的栈（其他语言的栈）来支持native方法的执行的栈称为本地方法栈。当JVM使用其他语言来实现指令集解释器是，也会使用本地方法栈。</p>
+<hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-09-08-java-memory-type"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-09-08-java-memory-type" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/09/08/java-memory-type/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/09/08/java-memory-type/">http://xuhuiqiang.cn/2016/09/08/java-memory-type/</a></h6><hr>
 
         
         </div>
@@ -244,7 +250,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/09/08/java-memory-type/" data-id="cisubjq9k0002t8kiohahr6mp" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/09/08/java-memory-type/" data-id="city2n9xp0006ngki93vnl14d" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -321,6 +327,15 @@
         
 <nav id="article-nav">
     
+        <a href="/2016/09/21/java-thread-asynchronous/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    具有返回值的线程：Callable与Future
+                
+            </div>
+        </a>
+    
     
         <a href="/2016/08/28/threadAnalysis/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">下一篇</strong>
@@ -389,6 +404,25 @@
         <h3 class="widget-title">最新文章</h3>
         <div class="widget">
             <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/21/java-thread-asynchronous/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/21/java-thread-asynchronous/" class="title">具有返回值的线程：Callable与Future</a></p>
+                            <p class="item-date"><time datetime="2016-09-21T01:45:13.000Z" itemprop="datePublished">2016-09-21</time></p>
+                        </div>
+                    </li>
                 
                     <li>
                         
@@ -466,25 +500,6 @@
                         </div>
                     </li>
                 
-                    <li>
-                        
-                        <div class="item-thumbnail">
-                            <a href="/2016/08/15/JavaClassInit/" class="thumbnail">
-    
-    
-        <span class="thumbnail-image thumbnail-none"></span>
-    
-</a>
-
-                        </div>
-                        
-                        <div class="item-inner">
-                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
-                            <p class="item-title"><a href="/2016/08/15/JavaClassInit/" class="title">Java类的初始化顺序</a></p>
-                            <p class="item-date"><time datetime="2016-08-15T02:21:25.000Z" itemprop="datePublished">2016-08-15</time></p>
-                        </div>
-                    </li>
-                
             </ul>
         </div>
     </div>
@@ -494,7 +509,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">分类</h3>
         <div class="widget">
-            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">9</span></li></ul>
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">10</span></li></ul>
         </div>
     </div>
 
@@ -503,7 +518,7 @@
     <div class="widget-wrap">
         <h3 class="widget-title">归档</h3>
         <div class="widget">
-            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">9</span></li></ul>
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">9</span></li></ul>
         </div>
     </div>
 

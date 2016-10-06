@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8">
     
-    <title>menu.sqlBasic | 呵呵</title>
+    <title>menu.具有返回值的线程：Callable与Future | 呵呵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="sql语句基础。">
+    <meta name="description" content="一个模拟异步下载的Java例子。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="sqlBasic">
-<meta property="og:url" content="http://xuhuiqiang.cn/2016/08/14/sqlBasic/index.html">
+<meta property="og:title" content="具有返回值的线程：Callable与Future">
+<meta property="og:url" content="http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/index.html">
 <meta property="og:site_name" content="呵呵">
-<meta property="og:description" content="sql语句基础。">
-<meta property="og:updated_time" content="2016-08-18T02:19:50.828Z">
+<meta property="og:description" content="一个模拟异步下载的Java例子。">
+<meta property="og:updated_time" content="2016-09-22T08:48:40.885Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="sqlBasic">
-<meta name="twitter:description" content="sql语句基础。">
+<meta name="twitter:title" content="具有返回值的线程：Callable与Future">
+<meta name="twitter:description" content="一个模拟异步下载的Java例子。">
     
 
     
@@ -184,7 +184,7 @@
 </aside>
 
             
-            <section id="main"><article id="post-sqlBasic" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-java-thread-asynchronous" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -193,7 +193,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            sqlBasic
+            具有返回值的线程：Callable与Future
         </h1>
     
 
@@ -201,8 +201,8 @@
                     
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2016/08/14/sqlBasic/">
-            <time datetime="2016-08-14T15:13:07.000Z" itemprop="datePublished">2016-08-14</time>
+        <a href="/2016/09/21/java-thread-asynchronous/">
+            <time datetime="2016-09-21T01:45:13.000Z" itemprop="datePublished">2016-09-21</time>
         </a>
     </div>
 
@@ -210,94 +210,28 @@
                     
     <div class="article-category">
     	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Database/">Database</a>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
     </div>
 
                     
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/SQL/">SQL</a>
-    </div>
-
                 </div>
             </header>
         
         <div class="article-entry" itemprop="articleBody">
         
             
-            <p>sql语句基础。<br><a id="more"></a></p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>SQL语言指结果查询语言，用于执行查询的语法，但是也包含了用于更新、插入、和删除记录的语法。主要由：数据定义语言（Data Definition Language，DDL），数据操作语言（Data Manipulation Language，DML），数据控制语言（DataControl Language，DCL）三者构成。</p>
-<h2 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h2><p>DDL用于定义和管理SQL数据库中所有对象的语言，它是我们有能力创建或修改数据库中的相关对象（数据库，表等等）已经他们之间的关系。常用的相关重要语句包括：</p>
-<ul>
-<li>Create Database：创建数据库</li>
-<li>Alter Database:修改数据库</li>
-<li>Create Table：创建数据库表</li>
-<li>Alter Table：更新表结构</li>
-<li>Drop Table：删除表</li>
-<li>Create Index：创建索引</li>
-<li>Drop Index：删除索引<br>其他还有对存储结构，事务，视图等的相关操作。</li>
-</ul>
-<h2 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h2><p>DML是用于操作数据库对象中所包含的数据的语言，其操作对象是记录（record）。其操作方法包括：</p>
-<ul>
-<li>Insert语句：用于插入新的记录，可以进行批量操作。</li>
-<li>Delete语句：用于删除表中的记录，可批量操作。</li>
-<li>Update语句：更新表中的记录，可批量操作。<br>与DDL不同的是，DML是对记录进行操作，而DDL是对数据库中的对象进行操作。两者的操作对象不同。</li>
-</ul>
-<h2 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h2><p>DCL是提供对数据库操作权限的相关操作，比如说数据库授权，数据库角色等等，其操作方法主要有两个：</p>
-<ul>
-<li>Grant：赋予权限。</li>
-<li>Revoke：撤回权限。<h2 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h2>实例基于MySql实现。</li>
-</ul>
-<h3 id="数据库定义"><a href="#数据库定义" class="headerlink" title="数据库定义"></a>数据库定义</h3><h4 id="定义数据库"><a href="#定义数据库" class="headerlink" title="定义数据库"></a>定义数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">drop</span> <span class="keyword">database</span> <span class="keyword">if</span> <span class="keyword">exists</span> DATABASE_Name;</div><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> DATABASE_NAME <span class="keyword">default</span> <span class="built_in">character</span> <span class="keyword">set</span> utf8 ;</div></pre></td></tr></table></figure>
-<p>首先判断数据库系统中是否存在同名数据库，如果存在则删除（通常不直接删除数据库）。<br>创建语句表示：创建了一个名为DATABASE_NAME的数据库，其字符存储的格式为utf8。<br>我们创建一个名为Test的数据库：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> <span class="keyword">Test</span> <span class="keyword">default</span> <span class="built_in">character</span> <span class="keyword">set</span> utf8 ;</div></pre></td></tr></table></figure>
-<h4 id="定义表结构"><a href="#定义表结构" class="headerlink" title="定义表结构"></a>定义表结构</h4><p>定义表结构由DDL实现，主要是：创建表，修改表，删除表。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> TABLE_NAME ( <span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, num1 <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span>);</div></pre></td></tr></table></figure>
-<p>上面代码创建了一张表，表中有两个属性，分别为整形自增的组建，<code>PRIMARY KEY</code>表示主键，<code>AUTO_INCREMENT</code>表示该属性自增。<br>当创建表之后，可以通过<code>desc TABLE_NAME;</code>，<code>describe TABLE_NAME</code>或者<code>show columns from TABLE_NAME</code>来查看表结构。<br>如果需要查看数据库里所有的表时，可以通过<code>show tables</code>来查询。以下创建两张表，person表和department表。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> person(<span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span>);</div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> department(<span class="keyword">id</span> <span class="built_in">int</span> PRIMARY <span class="keyword">KEY</span> AUTO_INCREMENT, <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span>);</div></pre></td></tr></table></figure>
-<p>当我们定义完表后，还可以通过相关DDL语言进行表结构的修改。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> TABLE_NAME <span class="keyword">add</span> COLUMNS_NAME COLUMNS_TYPE;</div></pre></td></tr></table></figure>
-<p>以上代码用于修改表的结构，可以通过<code>ALTER</code>命令来对表的字段进行增删改。</p>
-<ul>
-<li>增加字段 <code>add COLUMNS_NAME COLUMNS_TYPE;</code> 。</li>
-<li>删除字段 <code>drop COLUMNS_NAME;</code>。</li>
-<li>修改字段名称 <code>change old_COLUMNS_NAME new_COLUMNS_NAME COLUMNS_TYPE</code>（修改字段名称时，需要重新制定字段的类型）。</li>
-<li>修改字段的类型 <code>modify COLUMNS_NAME new_COLUMNS_TYPE</code>.</li>
-</ul>
-<p>目前数据库里有两张表，分别为<code>person</code>和<code>department</code>表。我们可以通过修改表的结构来关联二者。<br>我们为person表添加指向department表的外键。<br>首先，先在person表添加一个存储外键的字段<code>dp_fk</code>,其数据类型需要与department的主键相同。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> person <span class="keyword">add</span> dp_fk <span class="built_in">int</span>;</div></pre></td></tr></table></figure>
-<p>然后引入关联。由于如果表的主键需要为其他表的外键，则该主键必须是唯一的，因此需要为<code>department</code>表的主键添加唯一约束。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alter</span> <span class="keyword">table</span> department <span class="keyword">change</span> <span class="keyword">id</span> <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">UNIQUE</span>;</div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> person <span class="keyword">add</span> <span class="keyword">CONSTRAINT</span> fk_p_dp foreign <span class="keyword">key</span>(dp_fk) <span class="keyword">REFERENCES</span> department(<span class="keyword">id</span>) <span class="keyword">on</span> <span class="keyword">delete</span> restrict <span class="keyword">on</span> <span class="keyword">update</span> restrict;</div></pre></td></tr></table></figure>
-<p><em>注意：</em></p>
-<ul>
-<li><em>如果需要添加一个外键时，主表必须存在一个字段与外表的唯一主键的数据类型完全相同。</em></li>
-<li>_<code>on</code>后边主要是当外表的记录被删除时，主表的更新策略，分别有</li>
-<li><blockquote>
-<p><code>cascade</code>：在外表update/delete记录时，同时也在主表进行update/delete相关联的记录。</p>
-</blockquote>
-</li>
-<li><blockquote>
-<p><code>restrict</code>：如果主表有记录匹配的记录时，不允许外表对其主键进行update/delete操作（但是非主表外键的其他字段可以）。</p>
-</blockquote>
-</li>
-<li><blockquote>
-<p><code>set null</code>：置空处理。即当外表的记录被删除时，将主表上的匹配的记录主键置为空值，因此在该模式下，主表的外键字段不能设置为<code>not null</code>。</p>
-</blockquote>
-</li>
-<li><blockquote>
-<p><code>No action</code>：同<code>restrict</code>。</p>
-</blockquote>
-</li>
-</ul>
-<p>对表的字段创建索引<br>索引是数据表里所有记录引用指针。一下是三种创建数据库索引的方式：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 第一种直接创建</span></div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> INDEX_NAME <span class="keyword">ON</span> TABLE_NAME(COLUNMN_NAME)；</div><div class="line"><span class="comment">--第二种，通过修改表结构的方式</span></div><div class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> TABLE_NAME <span class="keyword">ADD</span> <span class="keyword">INDEX</span> INDEX_NAME <span class="keyword">ON</span>(COLUMN_NAME)；</div><div class="line"><span class="comment">--第三种方式，创建表的时候创建索引。</span></div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> TABLE_NAME(<span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> AUTO_INCREMENT, <span class="keyword">INDEX</span> INDEX_NAME (<span class="keyword">id</span>);</div></pre></td></tr></table></figure>
-<p>在person表为字段<code>name</code>添加索引，</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">index</span> personIndex <span class="keyword">on</span> Person(<span class="keyword">name</span>(<span class="keyword">length</span>));</div></pre></td></tr></table></figure>
-<p>删除索引</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">DROP</span> <span class="keyword">INDEX</span> index_name <span class="keyword">ON</span> <span class="keyword">table</span></div></pre></td></tr></table></figure>
-<p><em>不同表中的索引名称可以相同。</em></p>
+            <p>一个模拟异步下载的Java例子。<br><a id="more"></a></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们在Java中线程通常使用的都是无返回值的线程，如果我们需要使用到具有返回值的线程时，就需要使用两个接口<code>Future</code>和<code>Callable</code>，其中，Java为我们提供了一个对<code>Future</code>的实现类<code>FutureTask</code>，通过该类我们可以实时获取线程的具体情况。而<code>Callable</code>接口是我们需要实现的线程任务逻辑。即<code>Future</code>是存储<code>Callable</code>线程的运行情况。<br>我们可以通过一个实时获取下载情况的例子来说明这个类。  </p>
+<h1 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h1><p>这里，假设一个任务完成时间为2s，我们每个100ms就要更新当前的下载情况。由于<code>Future</code>接口仅仅提供<code>cancel()</code>,<code>isCancelled()</code>,<code>isDone()</code>,<code>get()</code>,<code>get(long, TimeUnit)</code>等接口方法，而<code>FutureTask</code>类暴露给我们使用的也是这几个方法，而我们需要的方法他们没有提供。我们可以通过适配器模式新增一个接口方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">TaskStatus</span></span>&#123;</div><div class="line">  <span class="comment">//该方法返回当前任务的进度</span></div><div class="line">   <span class="function"><span class="keyword">float</span> <span class="title">status</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>同时，新建一个类<code>TaskStatusImpl</code>，该类继承<code>TaskFuture</code>实现了接口<code>TaskStatus</code>。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">TaskStatus</span> <span class="keyword">extends</span> <span class="title">FutureTask</span>&lt;<span class="title">v</span>&gt; <span class="keyword">implements</span> <span class="title">TaskStatus</span></span>&#123;</div><div class="line">      <span class="keyword">long</span> begin; <span class="comment">//记录线程开始时间</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">TaskStatusImpl</span><span class="params">(Callable&lt;v&gt; callable)</span> </span>&#123;</div><div class="line">	<span class="keyword">super</span>(callable);</div><div class="line">	<span class="keyword">this</span>.begin = System.currentTimeMillis();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">status</span><span class="params">()</span> </span>&#123;</div><div class="line"><span class="comment">//线程完成时，返回1</span></div><div class="line">	<span class="keyword">if</span> (<span class="keyword">super</span>.isDone()) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="number">1f</span>;</div><div class="line">	&#125; <span class="keyword">else</span> &#123;   <span class="comment">//未完成，这计算当前的线程完成进度</span></div><div class="line">		<span class="keyword">long</span> now = System.currentTimeMillis();</div><div class="line">		<span class="keyword">long</span> temp = now - begin;</div><div class="line">		<span class="comment">// 除以2000是因为线程设置了2000的睡眠时间。</span></div><div class="line">		<span class="keyword">return</span> temp / <span class="number">2000f</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>测试类<code>Main</code>以上的接口和类都在该测试类的内部  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.concurrent.Callable;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.ExecutionException;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.FutureTask;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Main</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"---main begin---"</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		Main main = <span class="keyword">new</span> Main();</div><div class="line">		Task task = main.new Task();</div><div class="line">		TaskStatusImpl&lt;Integer&gt; future = main.new TaskStatusImpl&lt;Integer&gt;(task);</div><div class="line">		<span class="keyword">new</span> Thread(future).start();</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="keyword">while</span> (future.status() &lt; <span class="number">1</span>) &#123;</div><div class="line">				Thread.sleep(<span class="number">200</span>);</div><div class="line">				System.out.printf(<span class="string">"now status: %f\n"</span>, future.status());</div><div class="line">			&#125;</div><div class="line">			System.out.println(<span class="string">"Thread result: "</span> + future.get());</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e.printStackTrace();</div><div class="line">		&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="class"><span class="keyword">interface</span> <span class="title">TaskStatus</span> </span>&#123;</div><div class="line">		<span class="function"><span class="keyword">float</span> <span class="title">status</span><span class="params">()</span></span>;</div><div class="line">	&#125;</div><div class="line">	<span class="class"><span class="keyword">class</span> <span class="title">TaskStatusImpl</span>&lt;<span class="title">v</span>&gt; <span class="keyword">extends</span> <span class="title">FutureTask</span>&lt;<span class="title">v</span>&gt; <span class="keyword">implements</span> <span class="title">TaskStatus</span> </span>&#123;</div><div class="line">		<span class="keyword">long</span> begin;</div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="title">TaskStatusImpl</span><span class="params">(Callable&lt;v&gt; callable)</span> </span>&#123;</div><div class="line">			<span class="keyword">super</span>(callable);</div><div class="line">			<span class="keyword">this</span>.begin = System.currentTimeMillis();</div><div class="line">		&#125;</div><div class="line">		<span class="meta">@Override</span></div><div class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">status</span><span class="params">()</span> </span>&#123;</div><div class="line">			<span class="keyword">if</span> (<span class="keyword">super</span>.isDone()) &#123;</div><div class="line">				<span class="keyword">return</span> <span class="number">100f</span>;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				<span class="keyword">long</span> now = System.currentTimeMillis();</div><div class="line">				<span class="keyword">long</span> temp = now - begin;</div><div class="line">				<span class="keyword">return</span> temp / <span class="number">2000f</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="class"><span class="keyword">class</span> <span class="title">Task</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">Integer</span>&gt; </span>&#123;</div><div class="line">		<span class="function"><span class="keyword">public</span> Integer <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">			System.out.println(<span class="string">"---Thread begin---"</span>);</div><div class="line">			Thread.sleep(<span class="number">2000</span>);</div><div class="line">			System.out.println(<span class="string">"---Thread end---"</span>);</div><div class="line">			<span class="keyword">return</span> (<span class="keyword">int</span>) (Math.random() * <span class="number">10</span>);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">---main begin---</div><div class="line">---Thread begin---</div><div class="line">now status: <span class="number">0.100000</span></div><div class="line">now status: <span class="number">0.217500</span></div><div class="line">now status: <span class="number">0.317500</span></div><div class="line">now status: <span class="number">0.418500</span></div><div class="line">now status: <span class="number">0.519000</span></div><div class="line">now status: <span class="number">0.619000</span></div><div class="line">now status: <span class="number">0.719000</span></div><div class="line">now status: <span class="number">0.819000</span></div><div class="line">now status: <span class="number">0.919000</span></div><div class="line">---Thread end---</div><div class="line">now status: <span class="number">100.000000</span></div><div class="line">Thread result: <span class="number">6</span></div></pre></td></tr></table></figure>
 <hr>
-<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-sqlBasic"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-08-14-sqlBasic" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/08/14/sqlBasic/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/08/14/sqlBasic/">http://xuhuiqiang.cn/2016/08/14/sqlBasic/</a></h6><hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2016-09-21-java-thread-asynchronous"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2016-09-21-java-thread-asynchronous" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/">http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/</a></h6><hr>
 
         
         </div>
@@ -308,7 +242,7 @@
 
 </div>
 
-    <a data-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/" data-id="city2n9y5000hngkij1rhd3c8" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+    <a data-url="http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/" data-id="city2n9xp0008ngki2mpqshcj" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
 <script>
     (function ($) {
         // Prevent duplicate binding
@@ -376,7 +310,7 @@
 
             
     
-        <a href="http://xuhuiqiang.cn/2016/08/14/sqlBasic/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/">评论</a>
+        <a href="http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/">评论</a>
     
 
         </footer>
@@ -385,19 +319,10 @@
         
 <nav id="article-nav">
     
-        <a href="/2016/08/15/JavaClassInit/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">上一篇</strong>
-            <div class="article-nav-title">
-                
-                    Java类的初始化顺序
-                
-            </div>
-        </a>
     
-    
-        <a href="/2016/08/14/threadAbstract/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2016/09/08/java-memory-type/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">下一篇</strong>
-            <div class="article-nav-title">Java多线程简略图谱</div>
+            <div class="article-nav-title">java内存区域简析</div>
         </a>
     
 </nav>
@@ -411,7 +336,7 @@
     <section id="comments">
     
         
-    <div class="ds-thread" data-thread-key="2016/08/14/sqlBasic/" data-title="sqlBasic" data-url="http://xuhuiqiang.cn/2016/08/14/sqlBasic/"></div>
+    <div class="ds-thread" data-thread-key="2016/09/21/java-thread-asynchronous/" data-title="具有返回值的线程：Callable与Future" data-url="http://xuhuiqiang.cn/2016/09/21/java-thread-asynchronous/"></div>
     <style>
         #ds-thread #ds-reset .ds-textarea-wrapper {
             background: none;
