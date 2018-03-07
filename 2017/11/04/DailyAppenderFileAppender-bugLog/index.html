@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset="utf-8">
+    
+    <title>menu.DailyRollingAppender多进程文件覆盖处理 | 呵呵</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="多进程下，Java项目使用同一份log4j配置文件，导致多进程往同一份文件写日志，最终在日志文件发生滚动时，造成日志内容缺失。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DailyRollingAppender多进程文件覆盖处理">
+<meta property="og:url" content="http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog/index.html">
+<meta property="og:site_name" content="呵呵">
+<meta property="og:description" content="多进程下，Java项目使用同一份log4j配置文件，导致多进程往同一份文件写日志，最终在日志文件发生滚动时，造成日志内容缺失。">
+<meta property="og:updated_time" content="2017-11-05T02:16:34.047Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DailyRollingAppender多进程文件覆盖处理">
+<meta name="twitter:description" content="多进程下，Java项目使用同一份log4j配置文件，导致多进程往同一份文件写日志，最终在日志文件发生滚动时，造成日志内容缺失。">
+    
+
+    
+
+    
+
+    <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/vendor/open-sans/styles.css">
+    <link rel="stylesheet" href="/vendor/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/vendor/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/vendor/fancybox/jquery.fancybox.css">
+    
+    
+    
+    
+
+</head>
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">呵呵</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">主页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于我</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/BlogIcon.png" />
+                            <i class="fa fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">主页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于我</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/BlogIcon.png" />
+            <h2 id="name">Fijon</h2>
+            <h3 id="title">Web Developer</h3>
+            <span id="location"><i class="fa fa-map-marker"></i>JiangSu China</span>
+            <a id="follow" target="_blank" href="https://github.com/Fijon/">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                14
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                11
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Fijon" target="_blank" title="github" class=tooltip>
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss" class=tooltip>
+                            <i class="fa fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-DailyAppenderFileAppender-bugLog" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            DailyRollingAppender多进程文件覆盖处理
+        </h1>
+    
+
+                <div class="article-meta">
+                    
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2017/11/04/DailyAppenderFileAppender-bugLog/">
+            <time datetime="2017-11-04T15:36:08.000Z" itemprop="datePublished">2017-11-04</time>
+        </a>
+    </div>
+
+
+                    
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+                    
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/log4j/">log4j</a>
+    </div>
+
+                </div>
+            </header>
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>多进程下，Java项目使用同一份log4j配置文件，导致多进程往同一份文件写日志，最终在日志文件发生滚动时，造成日志内容缺失。<br><a id="more"></a></p>
+<h2 id="业务场景"><a href="#业务场景" class="headerlink" title="业务场景"></a>业务场景</h2><p>该任务是在处理Mapreduce提交的任务时，通过默认的log4j的DailyRollingFileAppender类进行日志文件滚动备份时，发现数据丢失的问题引起。<br>原因：<br>　　1、Hadoop集群中设置了一台机器可以同时启动两个Mapper和两个Reduceer，总共四个jvm进程。由于这四个文件读取的都是同一份日志配置文件，所以当一台机器启动两个或者两个以上的进程时，会导致多个jvm进程的日志写入同一份文件。由于log4j自己本身机制，多个进程同时往一个文件写入，并不会造成文件串行的情况。但是却会发生另外一种情况，即在日志文件发送滚动时，会导致日志内容丢失。<br>　　2、同样的情况，也发送在storm集群上。除了storm集群上默认收集的work日志，我们还需要新增一个另外的模块日志，来供统计平台收集处理。<br>解决方案：<br>　　为了避免这种情况，公司前辈实现了一个写日志文件的方式。简单的在log4j的基础上封装了一些接口，并是不同的jvm进程的日志，记录在不同的文件中。具体：在新增一个日志文件之前，会对该文件进行加锁。确认同一时刻内，只允许一个进程持有该文件。当有新的进程启动，并记录日志的时，先判断是否有进程持有该文件。如果没有则使用往该文件记录日志内容。否则则改写到其他文件。<br>缺陷：<br>　因为接口的抽象成都不高，导致日志接口与业务和框架耦合性非常高，丢失了logging日志框架的高通用性。  </p>
+<p>上边这种处理情况，虽然可以解决日志覆盖的情况，但是处理非常粗糙。存在很多问题，比如日志文件记录的内容不能安装时间排序，无法通过配置的范式配置备份的数量。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>　　为了方便按时间查询日志，我们需要按照时间轴来滚动日志。<br>　　为了模拟线上的情况，我在Windows做了测试，发现日志到了整点滚动时，并不会发生日志覆盖的情况，只是发生无法进行重命名文件，并且所有的日志文件都打在一个文件上，并不会进行日志文件切割。<br>　　之前猜想，之所以会出现日志覆盖的情况是存在这种情况，A进程和B进程同时对某个文件进行写入操作，导致二者之间出现相互覆盖的问题。从Windows环境测试来看，不会出现这个问题，而且与线上的日志滚动的问题也是不相同。<br>我将写好的测试代码，放到ubuntu环境重新跑了一下，出现了与线上环境一样的情况。而且该现象仅仅出现在多进程写日志，并且在滚动的时候，才会发生。<br>查看了log4j的DailyRollingFileAppender的实现。发现代码中使用subAppend（LoggingEvent）方法来判断是否进行日志滚动处理。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">subAppend</span><span class="params">(LoggingEvent event)</span> </span>&#123;</div><div class="line">        <span class="keyword">long</span> n = System.currentTimeMillis();</div><div class="line">        <span class="keyword">if</span>(n &gt;= <span class="keyword">this</span>.nextCheck) &#123;</div><div class="line">            <span class="keyword">this</span>.now.setTime(n);</div><div class="line">            <span class="keyword">this</span>.nextCheck = <span class="keyword">this</span>.rc.getNextCheckMillis(<span class="keyword">this</span>.now);</div><div class="line"></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">this</span>.rollOver();</div><div class="line">            &#125; <span class="keyword">catch</span> (IOException var5) &#123;</div><div class="line">                <span class="keyword">if</span>(var5 <span class="keyword">instanceof</span> InterruptedIOException) &#123;</div><div class="line">                    Thread.currentThread().interrupt();</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                LogLog.error(<span class="string">"rollOver() failed."</span>, var5);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">super</span>.subAppend(event);</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>当发生日志滚动时，调用rollOver()方法进行日志文件滚动处理。   </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">rollOver</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.datePattern == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">this</span>.errorHandler.error(<span class="string">"Missing DatePattern option in rollOver()."</span>);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        String datedFilename = <span class="keyword">this</span>.fileName + <span class="keyword">this</span>.sdf.format(<span class="keyword">this</span>.now);</div><div class="line">        <span class="keyword">if</span>(!<span class="keyword">this</span>.scheduledFilename.equals(datedFilename)) &#123;</div><div class="line">            <span class="keyword">this</span>.closeFile();</div><div class="line">            File target = <span class="keyword">new</span> File(<span class="keyword">this</span>.scheduledFilename);</div><div class="line">            <span class="keyword">if</span>(target.exists()) &#123;</div><div class="line">                target.delete();</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            File file = <span class="keyword">new</span> File(<span class="keyword">this</span>.fileName);</div><div class="line">            <span class="keyword">boolean</span> result = file.renameTo(target);</div><div class="line">            <span class="keyword">if</span>(result) &#123;</div><div class="line">                LogLog.debug(<span class="keyword">this</span>.fileName + <span class="string">" -&gt; "</span> + <span class="keyword">this</span>.scheduledFilename);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                LogLog.error(<span class="string">"Failed to rename ["</span> + <span class="keyword">this</span>.fileName + <span class="string">"] to ["</span> + <span class="keyword">this</span>.scheduledFilename + <span class="string">"]."</span>);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">this</span>.setFile(<span class="keyword">this</span>.fileName, <span class="keyword">true</span>, <span class="keyword">this</span>.bufferedIO, <span class="keyword">this</span>.bufferSize);</div><div class="line">            &#125; <span class="keyword">catch</span> (IOException var6) &#123;</div><div class="line">                <span class="keyword">this</span>.errorHandler.error(<span class="string">"setFile("</span> + <span class="keyword">this</span>.fileName + <span class="string">", true) call failed."</span>);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">this</span>.scheduledFilename = datedFilename;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　从代码可以看出，滚动时，按照以下逻辑进行判断：<br>    1、判断文件重命名格式是否存在。<br>    2、如果存在，则关闭当前文件（取消该文件占有权，并将内容写入到缓存区中）。<br>    3、判断滚动后的文件名称是否存在，如果存在则进行删除处理，否则采用renameTo方法对当前文件进行重命名。</p>
+<p>　　另外，对于renameTo的处理，Linux系统与Windows系统的区别还是挺大的。如果同时又A，B两个进程同时对同一文件f进行操作，并且某一线程优先对文件进行重命名操作，将其重命名为f1。<br>对于Windows来说，该文件被被其他进程所使用，不允许进行重命名操作。<br>对于Linux来说，系统持有的是该文件的句柄，而不是直接持有该文件。假设A进程先对f进行重命名操作，那么文件被重命名成功，并且A进程，新建f文件，将日志内容写入到f文件中。而B进程持有的是f文件的句柄，此时该句柄对应的是f1文件。即b文件依旧写入f1文件中。<br>在日志滚动时，Windows环境下，当A进程对f进行重命名时，因为B进程持有该文件，所以重命名失败。两者同时拥有该文件，谁也不允许其他人修改文件信息。导致不断的往该文件写入内容。最终日志文件会异常庞大。 在Linux环境下，A进程重命名成功，系统上存在f1，当B进程进行重命名时，会将f1文件删除，并将f文件重命名为f1文件。此时f1文件的内容存储的是A进程重命名之后的内容。导致A进程和B进程在前一时间段的日志内容丢失。    </p>
+<h2 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h2><p>　　鉴于rollOver()方法权限是default级别，因此没有办法通过继承的方式进行修改，除非在不修改原有log4j jar包的情况下，新增一个org.apapche.log4j的包名。通过这种方式进行修改进行继承修改。修改主要分为两种方面，一个是修改日志的缓存区（针对Windows环境），一个是修改rollOver()逻辑，如果存在该文件，不进行删除操作，而是直接写入到新的文件中。通过另外一种方式是新增一个类，然后将DailyRollingFileAppender整个类拷贝过去，修改rollingOver()方法。<br>在修改时，我采用第二种方式。修改后rollingOver()代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">rollOver</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>.datePattern == <span class="keyword">null</span>) &#123;</div><div class="line">          <span class="keyword">this</span>.errorHandler.error(<span class="string">"Missing DatePattern option in rollOver()."</span>);</div><div class="line">      &#125; <span class="keyword">else</span> &#123;</div><div class="line">          String datedFilename = <span class="keyword">this</span>.fileName + <span class="keyword">this</span>.sdf.format(<span class="keyword">this</span>.now);</div><div class="line">          <span class="keyword">if</span>(!<span class="keyword">this</span>.scheduledFilename.equals(datedFilename)) &#123;</div><div class="line">              <span class="keyword">this</span>.closeFile();</div><div class="line">              File target = <span class="keyword">new</span> File(<span class="keyword">this</span>.scheduledFilename);</div><div class="line">              File file = <span class="keyword">null</span>;</div><div class="line">              <span class="keyword">boolean</span> result = <span class="keyword">false</span>;</div><div class="line">              <span class="keyword">while</span>(!target.exists()) &#123;</div><div class="line">                  file = <span class="keyword">new</span> File(fileName);</div><div class="line">                  result = file.renameTo(target);</div><div class="line">                  <span class="keyword">if</span>(!result)&#123;</div><div class="line">                      LogLog.error(<span class="string">"Failed to rename ["</span> + <span class="keyword">this</span>.fileName + <span class="string">"] to ["</span> + <span class="keyword">this</span>.scheduledFilename + <span class="string">"]."</span>);</div><div class="line">                  &#125;<span class="keyword">else</span>&#123;</div><div class="line">                      LogLog.debug(<span class="keyword">this</span>.fileName + <span class="string">" -&gt; "</span> + <span class="keyword">this</span>.scheduledFilename);</div><div class="line">                  &#125;</div><div class="line">                  <span class="keyword">try</span>&#123;</div><div class="line">                      Thread.sleep(<span class="number">10</span>);</div><div class="line">                  &#125;<span class="keyword">catch</span> (InterruptedException e)&#123;</div><div class="line">                      e.printStackTrace();</div><div class="line">                  &#125;</div><div class="line">              &#125;</div><div class="line">              <span class="keyword">try</span> &#123;</div><div class="line">                  <span class="keyword">this</span>.setFile(<span class="keyword">this</span>.fileName, <span class="keyword">true</span>, <span class="keyword">this</span>.bufferedIO, <span class="keyword">this</span>.bufferSize);</div><div class="line">              &#125; <span class="keyword">catch</span> (IOException var6) &#123;</div><div class="line">                  <span class="keyword">this</span>.errorHandler.error(<span class="string">"setFile("</span> + <span class="keyword">this</span>.fileName + <span class="string">", true) call failed."</span>);</div><div class="line">              &#125;</div><div class="line">              <span class="keyword">this</span>.scheduledFilename = datedFilename;</div><div class="line">          &#125;</div><div class="line">      &#125;</div></pre></td></tr></table></figure>
+<p>　　代码中，主要修改了去除了删除在判断是否存在target文件的目录，并且对文件进行循环处理。轮询主要是为了Windows环境下的处理。<br>实际上在处理的时候，还在思考一个多进程问题，加入A，B进程同时进入While循环（A进程对target重命名之前，B进程也进入进入了while循环），此时会否存在A进程重命名之后，B进程再次重命名？<br>现实处理中是不会存在的。<br>　　在Windows环境下，假如A进程重命名成功，此时f文件被重命名为f1，文件系统不再存在f文件。接着A进程退出循环，B进程进去重命名f文件。此时f文件不存在，B进程重命名失败，进入下一个循环，由于target文件存在，B进程退出循环。但是存在理论上的一种情况，A进程重命名成功后，退出循环，并且已经新建f文件，并往里边写入信息了，此时B进程在进行重命名，那么是会造成文件丢失的。<br>Linux环境下，与Windows下环境不同。A，B进程同时拥有f文件的句柄。A进程重命名后，f文件变为f1文件，但是B进程拥有的还是原来f文件的句柄（现在为f1文件句柄），写入的是f1文件。A进程新增f文件，并持有该文件的句柄。B进程对f1文件进行重命名为f1，不影响。<br>ps:在Windows下，假想情况没有遇到，但是总觉得还是个坑。</p>
+<h2 id="Storm集群"><a href="#Storm集群" class="headerlink" title="Storm集群"></a>Storm集群</h2><p>　　storm集群比Hadoop集群，改起来比较容易。Storm的日志框架是采用logback，相关的配置文件在storm目录下的logback目录下的cluster文件中。在storm脚本中，启动nimbus, ui, supervisor, core时，都会通过指定参数的方式，携带上文件。通过全文搜索storm项目，在Clojure文件中采用系统设置变量的方式的方式指定相关配置。鉴于storm的worker端口号范围是固定的，则可以根据worker端口来配置worker进程的日志路径。与Mapreduce集群不同的，Mapreduce无法确认job中mapper和reducer之间的共性。<br>在cluster.xml文件新增自定义的looger日志，配置如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">appender</span> <span class="attr">name</span>=<span class="string">"monitorFile"</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.RollingFileAppender"</span>&gt;</span>  </div><div class="line">	<span class="tag">&lt;<span class="name">file</span>&gt;</span>***/$&#123;worker.port&#125;/***.log<span class="tag">&lt;/<span class="name">file</span>&gt;</span>   </div><div class="line">	<span class="tag">&lt;<span class="name">rollingPolicy</span> <span class="attr">class</span>=<span class="string">"ch.qos.logback.core.rolling.TimeBaseRollingPolicy"</span>&gt;</span></div><div class="line">    	<span class="tag">&lt;<span class="name">fileNamePattern</span>&gt;</span>\*\*\*/$&#123;worker.port&#125;/\*\*\*.log.%d&#123;yyyMMdd&#125;<span class="tag">&lt;/<span class="name">fileNamePattern</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">MaxHistory</span>&gt;</span>10<span class="tag">&lt;/<span class="name">MaxHistory</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">rollingPolicy</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">encoder</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">pattern</span>&gt;</span>[%d&#123;yyyy-MM-dd HH:mm:ss.sss&#125;] %msg%n<span class="tag">&lt;/<span class="name">pattern</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">encoder</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">appender</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">"monitorlog"</span> <span class="attr">additivity</span>=<span class="string">"false"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">level</span> <span class="attr">value</span>=<span class="string">"INFO"</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">apender-ref</span> <span class="attr">ref</span>=<span class="string">"ACCESS"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">logger</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h2 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h2><p>　　其实，多进程的日志记录还有另外一种写法，就是使用SocketAppender类，将日志发送到指定的日志服务器上。由于在分布式环境下，如果多个机器往同一台机器上写日志文件的话，会导致该机器的IO资源非常紧缺。如果不往同一台机器上写，那么需要在多台机器上部署多个接收日志内容的服务器，处理起来比较麻烦。所以没有采用该方法。</p>
+<hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2017-11-04-DailyAppenderFileAppender-bugLog"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2017-11-04-DailyAppenderFileAppender-bugLog" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog">http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog</a></h6><hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog/" data-id="cjehc7rs30000w4ki4tk7jjxn" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog/">评论</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    DailyRollingAppender多进程文件覆盖处理_2
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2017/06/17/mavenProfiles/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">Maven利用-P打出快照版本与正式版本</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    <section id="comments">
+    
+        
+    <div class="ds-thread" data-thread-key="2017/11/04/DailyAppenderFileAppender-bugLog/" data-title="DailyRollingAppender多进程文件覆盖处理" data-url="http://xuhuiqiang.cn/2017/11/04/DailyAppenderFileAppender-bugLog/"></div>
+    <style>
+        #ds-thread #ds-reset .ds-textarea-wrapper {
+            background: none;
+        }
+        #ds-reset .ds-avatar img {
+            box-shadow: none;
+        }
+        #ds-reset .ds-gradient-bg {
+            background: #f7f7f7;
+        }
+        #ds-thread #ds-reset li.ds-tab a {
+            border-radius: 3px;
+        }
+        #ds-thread #ds-reset .ds-post-button {
+            color: white;
+            border: none;
+            box-shadow: none;
+            background: #d32;
+            text-shadow: none;
+            font-weight: normal;
+            font-family: 'Microsoft Yahei';
+        }
+        #ds-thread #ds-reset .ds-post-button:hover {
+            color: white;
+            background: #DE594C;
+        }
+        #ds-thread #ds-reset .ds-post-button:active {
+            background: #d32;
+        }
+        #ds-smilies-tooltip ul.ds-smilies-tabs li a.ds-current {
+            color: white;
+            background: #d32;
+            box-shadow: none;
+            text-shadow: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
+    </section>
+
+</section>
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" class="title">DailyRollingAppender多进程文件覆盖处理_2</a></p>
+                            <p class="item-date"><time datetime="2017-11-05T02:17:39.000Z" itemprop="datePublished">2017-11-05</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" class="title">DailyRollingAppender多进程文件覆盖处理</a></p>
+                            <p class="item-date"><time datetime="2017-11-04T15:36:08.000Z" itemprop="datePublished">2017-11-04</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/mavenProfiles/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/06/17/mavenProfiles/" class="title">Maven利用-P打出快照版本与正式版本</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T15:45:13.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/21/java-thread-asynchronous/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/21/java-thread-asynchronous/" class="title">具有返回值的线程：Callable与Future</a></p>
+                            <p class="item-date"><time datetime="2016-09-21T01:45:13.000Z" itemprop="datePublished">2016-09-21</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/08/java-memory-type/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/08/java-memory-type/" class="title">java内存区域简析</a></p>
+                            <p class="item-date"><time datetime="2016-09-08T12:18:56.000Z" itemprop="datePublished">2016-09-08</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">13</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">9</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HashSet/">HashSet</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM-Memory-space/">JVM Memory space</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Original/">Original</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Runable/">Runable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/">Thread</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log4j/">log4j</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Collection/" style="font-size: 16.67px;">Collection</a> <a href="/tags/HashSet/" style="font-size: 10px;">HashSet</a> <a href="/tags/JVM-Memory-space/" style="font-size: 13.33px;">JVM Memory space</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/List/" style="font-size: 13.33px;">List</a> <a href="/tags/Original/" style="font-size: 16.67px;">Original</a> <a href="/tags/Runable/" style="font-size: 10px;">Runable</a> <a href="/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/tags/Thread/" style="font-size: 16.67px;">Thread</a> <a href="/tags/log4j/" style="font-size: 13.33px;">log4j</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Fijon<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+   
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'Fijon'};
+    (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+ 
+
+
+    
+        <script src="/vendor/fancybox/jquery.fancybox.pack.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

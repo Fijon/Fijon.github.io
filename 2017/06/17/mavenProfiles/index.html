@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset="utf-8">
+    
+    <title>menu.Maven利用-P打出快照版本与正式版本 | 呵呵</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Maven利用-P打出快照版本与正式版本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven利用-P打出快照版本与正式版本">
+<meta property="og:url" content="http://xuhuiqiang.cn/2017/06/17/mavenProfiles/index.html">
+<meta property="og:site_name" content="呵呵">
+<meta property="og:description" content="Maven利用-P打出快照版本与正式版本">
+<meta property="og:updated_time" content="2018-03-07T16:42:37.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Maven利用-P打出快照版本与正式版本">
+<meta name="twitter:description" content="Maven利用-P打出快照版本与正式版本">
+    
+
+    
+
+    
+
+    <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/vendor/open-sans/styles.css">
+    <link rel="stylesheet" href="/vendor/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/vendor/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/vendor/fancybox/jquery.fancybox.css">
+    
+    
+    
+    
+
+</head>
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">呵呵</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">主页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于我</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/BlogIcon.png" />
+                            <i class="fa fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">主页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于我</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/BlogIcon.png" />
+            <h2 id="name">Fijon</h2>
+            <h3 id="title">Web Developer</h3>
+            <span id="location"><i class="fa fa-map-marker"></i>JiangSu China</span>
+            <a id="follow" target="_blank" href="https://github.com/Fijon/">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                14
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                11
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Fijon" target="_blank" title="github" class=tooltip>
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss" class=tooltip>
+                            <i class="fa fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-mavenProfiles" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Maven利用-P打出快照版本与正式版本
+        </h1>
+    
+
+                <div class="article-meta">
+                    
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2017/06/17/mavenProfiles/">
+            <time datetime="2017-06-17T15:45:13.000Z" itemprop="datePublished">2017-06-17</time>
+        </a>
+    </div>
+
+
+                    
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+                    
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/maven/">maven</a>
+    </div>
+
+                </div>
+            </header>
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>Maven利用-P打出快照版本与正式版本<br><a id="more"></a></p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>​    公司有一个古老的项目是通过ant进行构建的。项目业务的繁杂，多个同事开发时，经常会因为某个业务的小bug，导致整体项目发布失败。为了避免这种情况，需要对该项目的业务进行拆分。  </p>
+<p>​    将项目按照功能和业务一分为四，分别为：平台相关的jar包，公共类ar包，以及业务jar包。拆分后，可以达到以下目标，如果有新的业务，则仅需要依赖平台相关jar包和基础jar包，便可以进行开发，并且不影响以前的业务逻辑，避免业务之间相互影响。  </p>
+<p>​        拆分好项目后，在开发是遇到一个问题，由于公共类jar包做不到高度抽象，一直处于不稳定的状态，随时需要修改发布。如果基础项目开发版本一直变化，则经常需要改动业务项目的pom.xml文件。如果基础项目包版本一直不改变的话，又无法做到业务包能实时获取到基础项目包的更新。如果基础包是快照版本的话，则可以实现业务包实时获取到基础项目包的更新。  </p>
+<p>​    此时，还存在一个特殊情况，通常项目发布到线上的时候，版本应该是正式版本，而业务依赖的基础项目和平台项目也应该是正式版本的。如果一直依赖的是快照版本，就会存在将不经过qa测试的基础项目和平台项目发布到线上。存在极大的风险。</p>
+<p>​         maven存在一个profiles标签，可以实现根据不同的环境，打出不同的包。</p>
+<h2 id="Profiles-解释"><a href="#Profiles-解释" class="headerlink" title="Profiles 解释"></a>Profiles 解释</h2><p>​    profile 是maven为了根据不同的编译环境进行灵活编译打包而设计的，用于定义特殊环境的特殊打包流程的一个标签配置，这个配置包含了该环境下的特有的配置。简单的说 ，我们可以在profile标签里边定义一系列特殊的配置，然后使用在编译的时候，选择是否激活这些配置。</p>
+<p>​    在maven官网中，profiles定义如下：</p>
+<blockquote>
+<p>Profiles are specified using a subset of the elements available in the POM itself (plus one extra section), and are triggered in any of a variety of ways.    </p>
+<p>在pom文件中，通过使用可用元素的子集来定义profiles,并且它可以被很多种方法触发。    </p>
+</blockquote>
+<p>这里边的可用元素指的以下元素，</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">profile</span>&gt;</span></div><div class="line">          <span class="comment">&lt;!-- 指定该配置的别名，该pom.xml内全局唯一，编译时，可以使用 -P profile_id 激活--&gt;</span></div><div class="line">           	<span class="tag">&lt;<span class="name">id</span>&gt;</span>profile_id<span class="tag">&lt;/<span class="name">id</span>&gt;</span>  </div><div class="line">             <span class="comment">&lt;!-- 设定激活该操作条件 --&gt;</span></div><div class="line">          	<span class="tag">&lt;<span class="name">activation</span>&gt;</span> </div><div class="line">              <span class="comment">&lt;!-- 默认激活 --&gt;</span></div><div class="line">            	<span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span> </div><div class="line">        	<span class="tag">&lt;/<span class="name">activation</span>&gt;</span> </div><div class="line">          	<span class="comment">&lt;!-- 设定编译属性 --&gt;</span></div><div class="line">          	<span class="tag">&lt;<span class="name">properties</span>&gt;</span>...<span class="tag">&lt;/<span class="name">properties</span>&gt;</span></div><div class="line">          	<span class="comment">&lt;!-- 设定编译打包条件，这部分编译与平时的build操作一样 --&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">build</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">defaultGoal</span>&gt;</span>...<span class="tag">&lt;/<span class="name">defaultGoal</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">finalName</span>&gt;</span>...<span class="tag">&lt;/<span class="name">finalName</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">resources</span>&gt;</span>...<span class="tag">&lt;/<span class="name">resources</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">testResources</span>&gt;</span>...<span class="tag">&lt;/<span class="name">testResources</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">plugins</span>&gt;</span>...<span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">build</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">reporting</span>&gt;</span>...<span class="tag">&lt;/<span class="name">reporting</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">modules</span>&gt;</span>...<span class="tag">&lt;/<span class="name">modules</span>&gt;</span></div><div class="line">            <span class="comment">&lt;!-- 指定特殊依赖 --&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span>...<span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span>...<span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">distributionManagement</span>&gt;</span>...<span class="tag">&lt;/<span class="name">distributionManagement</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">repositories</span>&gt;</span>...<span class="tag">&lt;/<span class="name">repositories</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">pluginRepositories</span>&gt;</span>...<span class="tag">&lt;/<span class="name">pluginRepositories</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="快照版本与正式版本号控制"><a href="#快照版本与正式版本号控制" class="headerlink" title="快照版本与正式版本号控制"></a>快照版本与正式版本号控制</h2><p>​    maven2会根据模块的版本号(pom文件中的version)中是否带有-SNAPSHOT来判断是快照版本还是正式版本。如果是快照版本，那么在mvn deploy时会自动发布到快照版本库中，会覆盖老的快照版本，而在使用快照版本的模块，在不更改版本号的情况下，直接编译打包时，maven会自动从镜像服务器上下载最新的快照版本。如果是正式发布版本，那么在mvn deploy时会自动发布到正式版本库中，而使用正式版本的模块，在不更改版本号的情况下，编译打包时如果本地已经存在该版本的模块则不会主动去镜像服务器上下载。 所以，我们在开发阶段，可以将公用库的版本设置为快照版本，而被依赖组件则引用快照版本进行开发，在公用库的快照版本更新后，我们也不需要修改pom文件提示版本号来下载新的版本，直接mvn执行相关编译、打包命令即可重新下载最新的快照库了，从而也方便了我们进行开发。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cn.fijon<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;project.release.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">name</span>&gt;</span>maven-demo<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.apache.org<span class="tag">&lt;/<span class="name">url</span>&gt;</span>  </div><div class="line">	</div><div class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;<span class="name">profile</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">id</span>&gt;</span>Release<span class="tag">&lt;/<span class="name">id</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;<span class="name">properties</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">project.release.version</span>&gt;</span>0.1<span class="tag">&lt;/<span class="name">project.release.version</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;/<span class="name">properties</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;/<span class="name">profile</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;<span class="name">profile</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">id</span>&gt;</span>Snapshot<span class="tag">&lt;/<span class="name">id</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;<span class="name">properties</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">project.release.version</span>&gt;</span>0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">project.release.version</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;/<span class="name">properties</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;/<span class="name">profile</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>那么我们可以通过以下命令打出不同的版本库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#打出快照版本，</div><div class="line">mvn clean deploy -P Snapshot</div><div class="line">#打出正式版本</div><div class="line">mvn clean deploy -P Release</div></pre></td></tr></table></figure>
+<blockquote>
+<p>这里还需要注意到package, install, deploy 三个mvn命令的区别。package是将项目打包的结果放在指定目录，install是将项目的打包后，按照指定的groupid, aritifactid，version三个配置，将最终的打包结果更新到本地maven库中。而deploy是将打包结果上传到配置的maven私服库中。而快照版本和正式版本是对于deploy命令来说的  。因为本地maven库并没有快照和正式版本一说。</p>
+</blockquote>
+<h2 id="编译不同的版本"><a href="#编译不同的版本" class="headerlink" title="编译不同的版本"></a>编译不同的版本</h2><p>​    上边说的是快照版本和正式发布版本的区别，而编译不同的版本是根据不同的执行环境打出不同的版本。在公司项目中，该业务逻辑在两个不同的计算框架上处理，需要根据不同的计算框架打出不同的jar包。  </p>
+<p>可以从上边的<profiles>标签获取到一些处理方式。</profiles></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;<span class="name">profile</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">id</span>&gt;</span>MapReduce<span class="tag">&lt;/<span class="name">id</span>&gt;</span>  </div><div class="line">       	<span class="tag">&lt;<span class="name">dependencis</span>&gt;</span></div><div class="line">           	<span class="comment">&lt;!-- MapReduce 计算相关依赖 --&gt;</span>        </div><div class="line">       	<span class="tag">&lt;/<span class="name">dependencis</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;/<span class="name">profile</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;<span class="name">profile</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">id</span>&gt;</span>Storm<span class="tag">&lt;/<span class="name">id</span>&gt;</span>  </div><div class="line">           <span class="tag">&lt;<span class="name">dependencis</span>&gt;</span></div><div class="line">           	<span class="comment">&lt;!-- Storm 计算相关依赖 --&gt;</span>        </div><div class="line">       	<span class="tag">&lt;/<span class="name">dependencis</span>&gt;</span>  </div><div class="line">       <span class="tag">&lt;/<span class="name">profile</span>&gt;</span>  </div><div class="line">   <span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>可以用以下命令打出不同环境的包。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#打出MapReduce依赖环境的包</div><div class="line">mvn clean deploy -P MapReduce</div><div class="line">#打出Storm依赖环境的包</div><div class="line">mvn clean deploy -P Storm</div><div class="line">#打出MapReduce依赖环境,并且为正式版本的包</div><div class="line">mvn clean deploy -P MapReduce,Release</div><div class="line">#打出MapReduce依赖环境,并且为快照版本的包</div><div class="line">mvn clean deploy -P MapReduce,Release</div></pre></td></tr></table></figure>
+<h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><ul>
+<li><a href="http://maven.apache.org/guides/introduction/introduction-to-profiles.html" target="_blank" rel="external">http://maven.apache.org/guides/introduction/introduction-to-profiles.html</a></li>
+</ul>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://xuhuiqiang.cn/2017/06/17/mavenProfiles/" data-id="cjehc7rud000qw4ki5lfsl0tb" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://xuhuiqiang.cn/2017/06/17/mavenProfiles/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2017/06/17/mavenProfiles/">评论</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+        <a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">上一篇</strong>
+            <div class="article-nav-title">
+                
+                    DailyRollingAppender多进程文件覆盖处理
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2016/09/21/java-thread-asynchronous/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">具有返回值的线程：Callable与Future</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    <section id="comments">
+    
+        
+    <div class="ds-thread" data-thread-key="2017/06/17/mavenProfiles/" data-title="Maven利用-P打出快照版本与正式版本" data-url="http://xuhuiqiang.cn/2017/06/17/mavenProfiles/"></div>
+    <style>
+        #ds-thread #ds-reset .ds-textarea-wrapper {
+            background: none;
+        }
+        #ds-reset .ds-avatar img {
+            box-shadow: none;
+        }
+        #ds-reset .ds-gradient-bg {
+            background: #f7f7f7;
+        }
+        #ds-thread #ds-reset li.ds-tab a {
+            border-radius: 3px;
+        }
+        #ds-thread #ds-reset .ds-post-button {
+            color: white;
+            border: none;
+            box-shadow: none;
+            background: #d32;
+            text-shadow: none;
+            font-weight: normal;
+            font-family: 'Microsoft Yahei';
+        }
+        #ds-thread #ds-reset .ds-post-button:hover {
+            color: white;
+            background: #DE594C;
+        }
+        #ds-thread #ds-reset .ds-post-button:active {
+            background: #d32;
+        }
+        #ds-smilies-tooltip ul.ds-smilies-tabs li a.ds-current {
+            color: white;
+            background: #d32;
+            box-shadow: none;
+            text-shadow: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
+    </section>
+
+</section>
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" class="title">DailyRollingAppender多进程文件覆盖处理_2</a></p>
+                            <p class="item-date"><time datetime="2017-11-05T02:17:39.000Z" itemprop="datePublished">2017-11-05</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" class="title">DailyRollingAppender多进程文件覆盖处理</a></p>
+                            <p class="item-date"><time datetime="2017-11-04T15:36:08.000Z" itemprop="datePublished">2017-11-04</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/mavenProfiles/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/06/17/mavenProfiles/" class="title">Maven利用-P打出快照版本与正式版本</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T15:45:13.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/21/java-thread-asynchronous/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/21/java-thread-asynchronous/" class="title">具有返回值的线程：Callable与Future</a></p>
+                            <p class="item-date"><time datetime="2016-09-21T01:45:13.000Z" itemprop="datePublished">2016-09-21</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/08/java-memory-type/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/08/java-memory-type/" class="title">java内存区域简析</a></p>
+                            <p class="item-date"><time datetime="2016-09-08T12:18:56.000Z" itemprop="datePublished">2016-09-08</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">13</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">9</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HashSet/">HashSet</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM-Memory-space/">JVM Memory space</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Original/">Original</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Runable/">Runable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/">Thread</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log4j/">log4j</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Collection/" style="font-size: 16.67px;">Collection</a> <a href="/tags/HashSet/" style="font-size: 10px;">HashSet</a> <a href="/tags/JVM-Memory-space/" style="font-size: 13.33px;">JVM Memory space</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/List/" style="font-size: 13.33px;">List</a> <a href="/tags/Original/" style="font-size: 16.67px;">Original</a> <a href="/tags/Runable/" style="font-size: 10px;">Runable</a> <a href="/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/tags/Thread/" style="font-size: 16.67px;">Thread</a> <a href="/tags/log4j/" style="font-size: 13.33px;">log4j</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Fijon<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+   
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'Fijon'};
+    (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+ 
+
+
+    
+        <script src="/vendor/fancybox/jquery.fancybox.pack.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>

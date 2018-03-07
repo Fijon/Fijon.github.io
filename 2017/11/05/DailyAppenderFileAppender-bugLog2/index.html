@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <meta charset="utf-8">
+    
+    <title>menu.DailyRollingAppender多进程文件覆盖处理_2 | 呵呵</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="在Windows环境下，log4j多进程情况下使用DailyRollingFileAppender进行日志文件滚动时，会少概率发生日志内容覆盖问题。实际上，在Linux环境下也会。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DailyRollingAppender多进程文件覆盖处理_2">
+<meta property="og:url" content="http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2/index.html">
+<meta property="og:site_name" content="呵呵">
+<meta property="og:description" content="在Windows环境下，log4j多进程情况下使用DailyRollingFileAppender进行日志文件滚动时，会少概率发生日志内容覆盖问题。实际上，在Linux环境下也会。">
+<meta property="og:updated_time" content="2017-11-05T07:20:47.076Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DailyRollingAppender多进程文件覆盖处理_2">
+<meta name="twitter:description" content="在Windows环境下，log4j多进程情况下使用DailyRollingFileAppender进行日志文件滚动时，会少概率发生日志内容覆盖问题。实际上，在Linux环境下也会。">
+    
+
+    
+
+    
+
+    <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/vendor/open-sans/styles.css">
+    <link rel="stylesheet" href="/vendor/source-code-pro/styles.css">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/vendor/jquery/2.1.3/jquery.min.js"></script>
+    
+    
+        <link rel="stylesheet" href="/vendor/fancybox/jquery.fancybox.css">
+    
+    
+    
+    
+
+</head>
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">呵呵</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/.">主页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于我</a>
+                
+            </nav>
+            
+                
+                <nav id="sub-nav">
+                    <div class="profile" id="profile-nav">
+                        <a id="profile-anchor" href="javascript:;">
+                            <img class="avatar" src="/css/images/BlogIcon.png" />
+                            <i class="fa fa-caret-down"></i>
+                        </a>
+                    </div>
+                </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="想要查找什么..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/.">主页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于我</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="搜索" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+                
+
+<aside id="profile">
+    <div class="inner profile-inner">
+        <div class="base-info profile-block">
+            <img id="avatar" src="/css/images/BlogIcon.png" />
+            <h2 id="name">Fijon</h2>
+            <h3 id="title">Web Developer</h3>
+            <span id="location"><i class="fa fa-map-marker"></i>JiangSu China</span>
+            <a id="follow" target="_blank" href="https://github.com/Fijon/">关注我</a>
+        </div>
+        <div class="article-info profile-block">
+            <div class="article-info-block">
+                14
+                <span>文章</span>
+            </div>
+            <div class="article-info-block">
+                11
+                <span>标签</span>
+            </div>
+        </div>
+        
+        <div class="profile-block social-links">
+            <table>
+                <tr>
+                    
+                    
+                    <td>
+                        <a href="https://github.com/Fijon" target="_blank" title="github" class=tooltip>
+                            <i class="fa fa-github"></i>
+                        </a>
+                    </td>
+                    
+                    <td>
+                        <a href="/" target="_blank" title="rss" class=tooltip>
+                            <i class="fa fa-rss"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </table>
+        </div>
+        
+    </div>
+</aside>
+
+            
+            <section id="main"><article id="post-DailyAppenderFileAppender-bugLog2" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+        
+            <header class="article-header">
+                
+    
+        <h1 class="article-title" itemprop="name">
+            DailyRollingAppender多进程文件覆盖处理_2
+        </h1>
+    
+
+                <div class="article-meta">
+                    
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/">
+            <time datetime="2017-11-05T02:17:39.000Z" itemprop="datePublished">2017-11-05</time>
+        </a>
+    </div>
+
+
+                    
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+                    
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/log4j/">log4j</a>
+    </div>
+
+                </div>
+            </header>
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+            
+            <p>在Windows环境下，log4j多进程情况下使用DailyRollingFileAppender进行日志文件滚动时，会少概率发生日志内容覆盖问题。实际上，在Linux环境下也会。<br><a id="more"></a></p>
+<h2 id="问题1："><a href="#问题1：" class="headerlink" title="问题1："></a>问题1：</h2><p>　　在Windows环境下，log4j多进程情况下使用DailyRollingFileAppender进行日志文件滚动时，会少概率发生日志内容覆盖问题。实际上，在Linux环境下也会。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span>(!target.exists()) &#123;</div><div class="line">        file = <span class="keyword">new</span> File(fileName);</div><div class="line">        result = file.renameTo(target);</div><div class="line">        <span class="keyword">if</span>(!result)&#123;</div><div class="line">            LogLog.error(<span class="string">"Failed to rename ["</span> + <span class="keyword">this</span>.fileName + <span class="string">"] to ["</span> + <span class="keyword">this</span>.scheduledFilename + <span class="string">"]."</span>);</div><div class="line">        &#125;<span class="keyword">else</span>&#123;</div><div class="line">            LogLog.debug(<span class="keyword">this</span>.fileName + <span class="string">" -&gt; "</span> + <span class="keyword">this</span>.scheduledFilename);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            Thread.sleep(<span class="number">10</span>);</div><div class="line">        &#125;<span class="keyword">catch</span> (InterruptedException e)&#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>　　在循环体中的renameTo(file)的代码会导致日子内容丢失。假设A进程执行到<code>file = new File(fileName)</code>代码行，然后CPU调度，A进程被阻塞。接着B进程进入循环体，并且B进程在这个时间切片内将剩余的代码执行，并退出rollOver()方法。此时B进程已经开始往fileName文件写入数据。日志路径下同时存在fileName和target两个文件。并且B进程对fileName文件进行写操作。接着A进程获取CPU时间切片，执行file.renameTo(Target)，因此会将fileName文件再次重命名为target。由于fileName文件是B进程刚刚开始写的日志文件，而target文件是上一周期的日志文件，在A进程执行renameTo方法后，target文件内容是B进程在本周期开始写的日志，导致日志文件内容丢失。  </p>
+<h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>　　由于我们是在多进程进行日志打印，如果使用代码块锁或者对象锁则在进程间并没有作用（进程在不同的jvm虚拟机中）。另外，我们需要多进程对文件进行读写，因此无法在一开始的时候，对文件进行加锁。我采用的做法的是：使用java的信号量机制（semaphore）进行进程间的通信。将以上代码修改为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span>(!target.exists())&#123;</div><div class="line">       <span class="keyword">final</span> Semaphore semp = <span class="keyword">new</span> Semaphore(<span class="number">5</span>);</div><div class="line">       <span class="keyword">try</span> &#123;</div><div class="line">           semp.acquire();</div><div class="line">           file = <span class="keyword">new</span> File(fileName);</div><div class="line">           <span class="keyword">if</span>(!target.exists())&#123;</div><div class="line">               file.renameTo(file);</div><div class="line">           &#125;</div><div class="line">           semp.release();</div><div class="line">       &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">           e.printStackTrace();</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<h3 id="问题二"><a href="#问题二" class="headerlink" title="问题二"></a>问题二</h3><p>　　在同公司老前辈说的时候，谈起了log4j的这个bug，按照老前辈的说法，log4j在日志滚动前，对已经存在的日志文件进行删除操作是为了处理脏数据，避免污染日志。然后，他提了一个问题，在同一jvm进程下，多线程打印文件时，是不会出现日志串行现象。如果在多进程下，对同一个文件进行写操作，会不会造成日志串行？一个问题把我问懵逼了。在解决这个问题之前，一直认为日志是不会串行，但是我没有验证过。除非log4j或者java底层对多进程写文件有相关处理。否则会发生日志串行问题。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> num = args.length;</div><div class="line">        String c = <span class="string">"A"</span>;</div><div class="line">        String path = <span class="string">"./f.txt"</span>;</div><div class="line">        <span class="keyword">if</span> (num == <span class="number">2</span>) &#123;</div><div class="line">            c = args[<span class="number">0</span>];</div><div class="line">            path = args[<span class="number">1</span>];</div><div class="line">        &#125;</div><div class="line">        StringBuffer sb = <span class="keyword">new</span> StringBuffer(<span class="number">2048</span>);</div><div class="line">        Thread.currentThread().setName(<span class="string">"Thread-"</span> + c);</div><div class="line">        sb.append(<span class="string">"Thread-c"</span> + c);</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">2048</span>; i++) &#123;</div><div class="line">            sb.append(c);</div><div class="line">        &#125;</div><div class="line">        sb.append(System.getProperty(<span class="string">"line.separator"</span>));</div><div class="line"></div><div class="line">        String content = sb.toString();</div><div class="line">        File f = <span class="keyword">null</span>;</div><div class="line">        OutputStream fos = <span class="keyword">null</span>;</div><div class="line">        BufferedOutputStream bos = <span class="keyword">null</span>;</div><div class="line">        SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss:SSS"</span>);</div><div class="line">        String date = <span class="string">""</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            f = <span class="keyword">new</span> File(path);</div><div class="line">            fos = <span class="keyword">new</span> FileOutputStream(f);</div><div class="line">            bos = <span class="keyword">new</span> BufferedOutputStream(fos);</div><div class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</div><div class="line">                date = sdf.format(<span class="keyword">new</span> Date());</div><div class="line">                bos.write((date + <span class="string">" "</span> + content).getBytes(<span class="string">"UTF-8"</span>));</div><div class="line">            &#125;</div><div class="line">            bos.flush();</div><div class="line">            </div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="keyword">if</span> (bos != <span class="keyword">null</span>) &#123;</div><div class="line">                    bos.close();</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span>(fos != <span class="keyword">null</span>)&#123;</div><div class="line">                    fos.close();</div><div class="line">                &#125;</div><div class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">                bos= <span class="keyword">null</span>;</div><div class="line">                fos = <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>　　以上代码表示往指定文件写入指定的字符串。最终写入到文件的行的内容是，是指定字符串的2048倍。一行写入长度不同，更能反映出存在串行的情况。<br>　　通过文件的总行数是否与预期一样来判断文件是否出现串行的情况。代码中将每个进程往同一文件写入10000行数据。假设我们开了n个进程，每个进程开了m个线程对同一文件进行写入操作，则文件最终总行数应该为n×m×10000行。当程序运行结束后，可以通过<code>wc -l 文件名</code>命令获取文件的行数。<br>通过实验验证，文件并不会出现串行的情况发生。</p>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><p>　　通过查看BufferedOutPutStream的源码，write() 方法从调用开始到最后调用native方法均没有加锁。按照猜想分析：想要控制写文件不串行，必须在写入文件时进行互斥控制。假如A进程的缓存区间是5M，从A文件获取句柄，当缓存区间满时，需要从内存刷入硬盘中（写到文件中）。B进程也是同样的流程。假设A，B进程获取f文件的句柄，两者同时写入。其写入过程如下：
+　　</p>
+<table>
+<thead>
+<tr>
+<th><font color="#FF0000"> A_begin</font></th>
+<th></th>
+<th></th>
+<th></th>
+<th><font color="#FF0000"> B_begin</font></th>
+<th></th>
+<th><font color="#FF0000"> A_end</font></th>
+<th></th>
+<th><font color="#FF0000"> B_end</font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>表格为文件的写入长度，A_bgin点为A进程开始写如文件的位置，每次写入为一行，从A_begin到A_end。现在存在一种情况，当A进程开始写入点时，文件A点到结束的地方并不全是A进程所单独占有，其他进程也可以在两点的任意一个地方写入（B_bgein点开始写）。如果A进程写入并且flush了，紧接着B进程也开始写入。这样会导致A进程写入的信息会被B进程所覆盖。<br>然而实际情况与猜想不同。总共测试了十多次，调整了缓存大小，加大每行的字节数，均没有出现猜想的情况。<br>PS：由于大量写入，导致系统io资源不足，在通过<code>iostat -m 1</code>时发现，当进程数越多时，写入速度越慢。并且写入速度及其不稳定。毫无理由的猜想，这么慢，会不会有锁操作？<br>由于Java实现的write方法均没有加锁代码存在。因此怀疑native代码中，存在加锁操作。然后使用<code>strace</code>命令启动了一个单线程的写入程序，查看简单的系统调用过程。发现系统在每次调用write方法时，前后都会进行加锁操作。有理由认为：当java将缓存数据刷入硬盘时，进程间的操作时互斥的。这才能解释当Java多进程写文件时，不会发生串行现象。</p>
+<hr>
+<h6 id="博文原创，欢迎装载！"><a href="#博文原创，欢迎装载！" class="headerlink" title="博文原创，欢迎装载！"></a>博文原创，欢迎装载！</h6><h6 id="转载请附上原文链接：http-xuhuiqiang-cn-2017-11-05-DailyAppenderFileAppender-bugLog2"><a href="#转载请附上原文链接：http-xuhuiqiang-cn-2017-11-05-DailyAppenderFileAppender-bugLog2" class="headerlink" title="转载请附上原文链接：http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2"></a>转载请附上原文链接：<a href="http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2">http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2</a></h6><hr>
+
+        
+        </div>
+        <footer class="article-footer">
+            <div class="share-container">
+
+
+
+</div>
+
+    <a data-url="http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2/" data-id="cjehc7rsd0002w4kilzgjrrvs" class="article-share-link"><i class="fa fa-share"></i>分享到</a>
+<script>
+    (function ($) {
+        // Prevent duplicate binding
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+</script>
+
+            
+    
+        <a href="http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2/#comments" class="article-comment-link disqus-comment-count" data-disqus-url="http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2/">评论</a>
+    
+
+        </footer>
+    </div>
+    
+        
+<nav id="article-nav">
+    
+    
+        <a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">下一篇</strong>
+            <div class="article-nav-title">DailyRollingAppender多进程文件覆盖处理</div>
+        </a>
+    
+</nav>
+
+
+    
+</article>
+
+
+    
+    <section id="comments">
+    
+        
+    <div class="ds-thread" data-thread-key="2017/11/05/DailyAppenderFileAppender-bugLog2/" data-title="DailyRollingAppender多进程文件覆盖处理_2" data-url="http://xuhuiqiang.cn/2017/11/05/DailyAppenderFileAppender-bugLog2/"></div>
+    <style>
+        #ds-thread #ds-reset .ds-textarea-wrapper {
+            background: none;
+        }
+        #ds-reset .ds-avatar img {
+            box-shadow: none;
+        }
+        #ds-reset .ds-gradient-bg {
+            background: #f7f7f7;
+        }
+        #ds-thread #ds-reset li.ds-tab a {
+            border-radius: 3px;
+        }
+        #ds-thread #ds-reset .ds-post-button {
+            color: white;
+            border: none;
+            box-shadow: none;
+            background: #d32;
+            text-shadow: none;
+            font-weight: normal;
+            font-family: 'Microsoft Yahei';
+        }
+        #ds-thread #ds-reset .ds-post-button:hover {
+            color: white;
+            background: #DE594C;
+        }
+        #ds-thread #ds-reset .ds-post-button:active {
+            background: #d32;
+        }
+        #ds-smilies-tooltip ul.ds-smilies-tabs li a.ds-current {
+            color: white;
+            background: #d32;
+            box-shadow: none;
+            text-shadow: none;
+            font-weight: normal;
+        }
+    </style>
+
+    
+    </section>
+
+</section>
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">最新文章</h3>
+        <div class="widget">
+            <ul id="recent-post" class="">
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/11/05/DailyAppenderFileAppender-bugLog2/" class="title">DailyRollingAppender多进程文件覆盖处理_2</a></p>
+                            <p class="item-date"><time datetime="2017-11-05T02:17:39.000Z" itemprop="datePublished">2017-11-05</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/11/04/DailyAppenderFileAppender-bugLog/" class="title">DailyRollingAppender多进程文件覆盖处理</a></p>
+                            <p class="item-date"><time datetime="2017-11-04T15:36:08.000Z" itemprop="datePublished">2017-11-04</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2017/06/17/mavenProfiles/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2017/06/17/mavenProfiles/" class="title">Maven利用-P打出快照版本与正式版本</a></p>
+                            <p class="item-date"><time datetime="2017-06-17T15:45:13.000Z" itemprop="datePublished">2017-06-17</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/21/java-thread-asynchronous/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/21/java-thread-asynchronous/" class="title">具有返回值的线程：Callable与Future</a></p>
+                            <p class="item-date"><time datetime="2016-09-21T01:45:13.000Z" itemprop="datePublished">2016-09-21</time></p>
+                        </div>
+                    </li>
+                
+                    <li>
+                        
+                        <div class="item-thumbnail">
+                            <a href="/2016/09/08/java-memory-type/" class="thumbnail">
+    
+    
+        <span class="thumbnail-image thumbnail-none"></span>
+    
+</a>
+
+                        </div>
+                        
+                        <div class="item-inner">
+                            <p class="item-category"><a class="article-category-link" href="/categories/Java/">Java</a></p>
+                            <p class="item-title"><a href="/2016/09/08/java-memory-type/" class="title">java内存区域简析</a></p>
+                            <p class="item-date"><time datetime="2016-09-08T12:18:56.000Z" itemprop="datePublished">2016-09-08</time></p>
+                        </div>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">分类</h3>
+        <div class="widget">
+            <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Database/">Database</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">13</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">归档</h3>
+        <div class="widget">
+            <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">六月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">九月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">9</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签</h3>
+        <div class="widget">
+            <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Collection/">Collection</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HashSet/">HashSet</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM-Memory-space/">JVM Memory space</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/List/">List</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Original/">Original</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Runable/">Runable</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SQL/">SQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Thread/">Thread</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/log4j/">log4j</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/">maven</a><span class="tag-list-count">1</span></li></ul>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap">
+        <h3 class="widget-title">标签云</h3>
+        <div class="widget tagcloud">
+            <a href="/tags/Collection/" style="font-size: 16.67px;">Collection</a> <a href="/tags/HashSet/" style="font-size: 10px;">HashSet</a> <a href="/tags/JVM-Memory-space/" style="font-size: 13.33px;">JVM Memory space</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/List/" style="font-size: 13.33px;">List</a> <a href="/tags/Original/" style="font-size: 16.67px;">Original</a> <a href="/tags/Runable/" style="font-size: 10px;">Runable</a> <a href="/tags/SQL/" style="font-size: 10px;">SQL</a> <a href="/tags/Thread/" style="font-size: 16.67px;">Thread</a> <a href="/tags/log4j/" style="font-size: 13.33px;">log4j</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a>
+        </div>
+    </div>
+
+    
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title">链接</h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="http://hexo.io">Hexo</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            &copy; 2018 Fijon<br>
+            Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+        </div>
+    </div>
+</footer>
+        
+   
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'Fijon'};
+    (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+ 
+
+
+    
+        <script src="/vendor/fancybox/jquery.fancybox.pack.js"></script>
+    
+
+
+<!-- Custom Scripts -->
+<script src="/js/main.js"></script>
+
+    </div>
+</body>
+</html>
